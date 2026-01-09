@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #2769ac;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  background: #6f8aff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.screen {
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+}
+
+button.secondary {
+  background: #475569;
+}
+
+button.disabled {
+  background: #334155;
+  cursor: not-allowed;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.operation {
+  font-size: 28px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.message {
+  text-align: center;
+  margin-top: 10px;
+}
