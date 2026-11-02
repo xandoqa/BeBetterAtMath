@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar o compilador
+        run: npm install --no-package-lock
+
+      - name: Checar os tipos
+        run: npm run check
+
+      - name: Conferir se o build commitado está atualizado
+        run: |
+          npm run build
+          if ! git diff --quiet -- assets/js; then
+            echo "::error::assets/js está desatualizado. Rode 'npm run build' e faça commit do resultado."
+            git diff --stat -- assets/js
+            exit 1
+          fi
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rodar os testes
+        run: python -m unittest discover -s tools -v
