@@ -1,0 +1,77 @@
+# Be Better at Math — ambiente completo
+#
+#   ./iniciar.sh     sobe tudo        ./parar.sh     desliga
+#
+# Serviços:
+#   db    PostgreSQL 16, com o esquema de db/init.sql
+#   api   API do placar (FastAPI), em http://localhost:8000
+#   web   O site, servido por nginx, em http://localhost:8080
+
+name: bebetteratmath
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: bbam-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bbam}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bbam}
+      POSTGRES_DB: ${POSTGRES_DB:-bbam}
+      # Acelera o primeiro boot; não vale para produção.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - dados-postgres:/var/lib/postgresql/data
+      # Só roda quando o volume está vazio.
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bbam} -d ${POSTGRES_DB:-bbam}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build: ./server
+    container_name: bbam-api
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bbam}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bbam}
+      POSTGRES_DB: ${POSTGRES_DB:-bbam}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        # Espera o banco aceitar conexões, não só o contêiner existir.
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/saude', timeout=3).status==200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  web:
+    image: nginx:1.27-alpine
+    container_name: bbam-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      # O site é montado como somente leitura: editar um arquivo e
+      # recarregar a página já mostra a mudança, sem rebuild.
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./assets:/usr/share/nginx/html/assets:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+
+volumes:
+  dados-postgres:
+    name: bbam-dados-postgres

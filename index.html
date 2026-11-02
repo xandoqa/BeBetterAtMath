@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Be Better at Math — treino de cálculo mental</title>
+
+  <meta name="description" content="Treino de cálculo mental: tabuada e operações aleatórias com pontuação, sequência de acertos e recordes salvos no seu aparelho." />
+  <meta name="author" content="Alexandre e Felipe" />
+  <meta name="theme-color" content="#1B3A6B" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0E1726" media="(prefers-color-scheme: dark)" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B3A6B'/%3E%3Cpath d='M10 10l12 12M22 10L10 22' stroke='%23F7F7F4' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Darker+Grotesque:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <main class="app" id="conteudo">
+
+    <!-- ╌╌╌ ABERTURA ╌╌╌ -->
+    <section id="splash" class="screen screen--center" data-screen="splash">
+      <p class="wordmark">
+        <span class="wordmark__line">Be Better</span>
+        <span class="wordmark__line wordmark__line--em">at Math</span>
+      </p>
+      <p class="splash__hint">Toque para começar</p>
+    </section>
+
+    <!-- ╌╌╌ MENU ╌╌╌ -->
+    <section id="menu" class="screen is-hidden" data-screen="menu" hidden>
+      <header class="bar">
+        <p class="bar__mark">Be Better at Math</p>
+        <button class="icon-btn" type="button" data-action="toggle-theme" aria-label="Alternar tema claro e escuro">
+          <span aria-hidden="true" data-theme-icon>◐</span>
+        </button>
+      </header>
+
+      <h1 class="title">O que vamos<br />treinar hoje?</h1>
+
+      <nav class="stack" aria-label="Modos de treino">
+        <button class="card-btn" type="button" data-action="goto" data-target="tabuadaConfig">
+          <span class="card-btn__name">Tabuada</span>
+          <span class="card-btn__desc">Multiplicação em sequência, por faixa de números</span>
+        </button>
+
+        <button class="card-btn" type="button" data-action="goto" data-target="randomConfig">
+          <span class="card-btn__name">Números aleatórios</span>
+          <span class="card-btn__desc">Soma, subtração, multiplicação e divisão</span>
+        </button>
+
+        <button class="card-btn card-btn--soon" type="button" disabled aria-disabled="true">
+          <span class="card-btn__name">Sudoku</span>
+          <span class="card-btn__desc">Em desenvolvimento</span>
+        </button>
+
+        <button class="card-btn card-btn--soon" type="button" disabled aria-disabled="true">
+          <span class="card-btn__name">Lógica</span>
+          <span class="card-btn__desc">Em desenvolvimento</span>
+        </button>
+      </nav>
+
+      <footer class="credits">
+        <p>Feito por <strong>Alexandre</strong> e <strong>Felipe</strong></p>
+        <button class="link-btn" type="button" data-action="goto" data-target="about">Sobre o projeto</button>
+      </footer>
+    </section>
+
+    <!-- ╌╌╌ TABUADA: FAIXA ╌╌╌ -->
+    <section id="tabuadaConfig" class="screen is-hidden" data-screen="tabuadaConfig" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
+      </header>
+
+      <h2 class="title">Tabuada</h2>
+      <p class="lede">Escolha a faixa de números. Cada rodada tem 10 contas.</p>
+
+      <div class="stack">
+        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="easy">
+          <span class="card-btn__name">Fácil</span>
+          <span class="card-btn__desc">Tabuadas de 1 a 10</span>
+        </button>
+        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="medium">
+          <span class="card-btn__name">Médio</span>
+          <span class="card-btn__desc">Tabuadas de 10 a 50</span>
+        </button>
+        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="hard">
+          <span class="card-btn__name">Difícil</span>
+          <span class="card-btn__desc">Tabuadas de 50 a 100</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ╌╌╌ ALEATÓRIOS: OPERAÇÃO ╌╌╌ -->
+    <section id="randomConfig" class="screen is-hidden" data-screen="randomConfig" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
+      </header>
+
+      <h2 class="title">Números aleatórios</h2>
+      <p class="lede">Escolha a operação.</p>
+
+      <div class="stack stack--grid">
+        <button class="op-btn" type="button" data-action="pick-op" data-op="sum">
+          <span class="op-btn__sign" aria-hidden="true">+</span>
+          <span class="op-btn__name">Soma</span>
+        </button>
+        <button class="op-btn" type="button" data-action="pick-op" data-op="sub">
+          <span class="op-btn__sign" aria-hidden="true">−</span>
+          <span class="op-btn__name">Subtração</span>
+        </button>
+        <button class="op-btn" type="button" data-action="pick-op" data-op="mul">
+          <span class="op-btn__sign" aria-hidden="true">×</span>
+          <span class="op-btn__name">Multiplicação</span>
+        </button>
+        <button class="op-btn" type="button" data-action="pick-op" data-op="div">
+          <span class="op-btn__sign" aria-hidden="true">÷</span>
+          <span class="op-btn__name">Divisão</span>
+        </button>
+        <button class="op-btn op-btn--wide" type="button" data-action="pick-op" data-op="mix">
+          <span class="op-btn__sign" aria-hidden="true">±</span>
+          <span class="op-btn__name">Misto — as quatro juntas</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ╌╌╌ ALEATÓRIOS: NÍVEL ╌╌╌ -->
+    <section id="randomLevel" class="screen is-hidden" data-screen="randomLevel" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="goto" data-target="randomConfig">Voltar</button>
+      </header>
+
+      <h2 class="title" data-op-title>Soma</h2>
+      <p class="lede">Escolha o nível. Cada rodada tem 10 contas.</p>
+
+      <div class="stack">
+        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="easy">
+          <span class="card-btn__name">Fácil</span>
+          <span class="card-btn__desc">Números de 1 a 10</span>
+        </button>
+        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="medium">
+          <span class="card-btn__name">Médio</span>
+          <span class="card-btn__desc">Números de 10 a 50</span>
+        </button>
+        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="hard">
+          <span class="card-btn__name">Difícil</span>
+          <span class="card-btn__desc">Números de 50 a 100</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ╌╌╌ JOGO ╌╌╌ -->
+    <section id="game" class="screen is-hidden" data-screen="game" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="quit">Sair</button>
+        <p class="bar__meta">
+          <span data-progress>1 / 10</span>
+        </p>
+      </header>
+
+      <div class="scoreline">
+        <span class="scoreline__item">
+          <span class="scoreline__value" data-score>0</span>
+          <span class="scoreline__label">pontos</span>
+        </span>
+        <span class="scoreline__item">
+          <span class="scoreline__value" data-streak>0</span>
+          <span class="scoreline__label">seguidas</span>
+        </span>
+      </div>
+
+      <div class="progress" role="presentation">
+        <span class="progress__fill" data-progress-bar style="transform:scaleX(0)"></span>
+      </div>
+
+      <form class="worksheet" data-answer-form novalidate>
+        <p class="operation" data-operation aria-live="polite">
+          <span class="operation__expr">2 × 3</span>
+        </p>
+
+        <div class="blank">
+          <label class="sr-only" for="answer">Resposta</label>
+          <input
+            class="blank__input"
+            id="answer"
+            data-answer
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="done"
+            aria-describedby="feedback"
+          />
+        </div>
+
+        <button class="primary-btn" type="submit" data-submit>Responder</button>
+      </form>
+
+      <p class="feedback" id="feedback" data-feedback role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ╌╌╌ RESULTADO ╌╌╌ -->
+    <section id="results" class="screen is-hidden" data-screen="results" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="goto" data-target="menu">Menu</button>
+      </header>
+
+      <p class="result-eyebrow" data-result-mode>Tabuada · Fácil</p>
+      <h2 class="result-score"><span data-result-score>0</span><span class="result-score__unit">pts</span></h2>
+      <p class="result-record is-hidden" data-result-record>Novo recorde</p>
+
+      <dl class="result-grid">
+        <div class="result-grid__cell">
+          <dt>Acertos</dt>
+          <dd data-result-hits>0 de 10</dd>
+        </div>
+        <div class="result-grid__cell">
+          <dt>Maior sequência</dt>
+          <dd data-result-streak>0</dd>
+        </div>
+        <div class="result-grid__cell">
+          <dt>Tempo</dt>
+          <dd data-result-time>0s</dd>
+        </div>
+        <div class="result-grid__cell">
+          <dt>Seu recorde</dt>
+          <dd data-result-best>—</dd>
+        </div>
+      </dl>
+
+      <section class="misses is-hidden" data-misses-wrap>
+        <h3 class="misses__title">Para revisar</h3>
+        <ul class="misses__list" data-misses></ul>
+      </section>
+
+      <!-- Só aparece quando a API do placar está no ar (Docker ligado). -->
+      <section class="board is-hidden" data-board>
+        <h3 class="board__title">Placar compartilhado</h3>
+
+        <form class="board__join is-hidden" data-join-form>
+          <label class="sr-only" for="apelido">Seu apelido no placar</label>
+          <input
+            class="board__input"
+            id="apelido"
+            data-nickname
+            type="text"
+            maxlength="24"
+            minlength="2"
+            placeholder="Escolha um apelido"
+            autocomplete="nickname"
+            required
+          />
+          <button class="primary-btn" type="submit">Entrar no placar</button>
+        </form>
+
+        <ol class="board__list" data-board-list></ol>
+        <p class="board__note" data-board-note></p>
+      </section>
+
+      <div class="stack">
+        <button class="primary-btn" type="button" data-action="again">Jogar de novo</button>
+        <button class="ghost-btn" type="button" data-action="goto" data-target="menu">Voltar ao menu</button>
+      </div>
+    </section>
+
+    <!-- ╌╌╌ SOBRE ╌╌╌ -->
+    <section id="about" class="screen is-hidden" data-screen="about" hidden>
+      <header class="bar">
+        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
+      </header>
+
+      <h2 class="title">Sobre</h2>
+      <p class="prose">
+        Be Better at Math é um treino curto de cálculo mental. Cada rodada tem dez
+        contas: você ganha pontos por acerto e pontos extras por manter uma
+        sequência. Os recordes ficam salvos neste aparelho.
+      </p>
+
+      <h3 class="subtitle">Desenvolvedores</h3>
+      <ul class="people">
+        <li class="people__item"><span class="people__initial" aria-hidden="true">A</span>Alexandre</li>
+        <li class="people__item"><span class="people__initial" aria-hidden="true">F</span>Felipe</li>
+      </ul>
+
+      <div class="stack">
+        <button class="ghost-btn" type="button" data-action="reset-records">Apagar meus recordes</button>
+      </div>
+
+      <footer class="credits">
+        <p data-version>Versão 2.1.0</p>
+        <a class="link-btn" href="https://github.com/xandoqa/BeBetterAtMath">Código no GitHub</a>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- Compilado de src/*.ts — rode `npm run build` após editar a fonte. -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Dependências
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Registros locais
+*.log
+npm-debug.log*
+.bebetteratmath.json
+
+# Nota: assets/js/ NÃO é ignorado de propósito.
+# O build compilado fica versionado para que o GitHub Pages
+# sirva o site sem precisar de etapa de compilação.
