@@ -10,7 +10,7 @@ Uso:
     python3 tools/bbam.py --modo tabuada --nivel facil
     python3 tools/bbam.py --modo aleatorio --operacao div --nivel medio
 
-Desenvolvido por Alexandre e Felipe.
+Desenvolvido por Alexandre (@xandoqa) e Felipe.
 """
 
 from __future__ import annotations
@@ -313,7 +313,7 @@ def main(argv: list[str] | None = None) -> int:
     pal = Palette(enabled=sys.stdout.isatty() and not args.sem_cor)
 
     print(pal.blue(pal.bold("\n  be better at math")))
-    print(pal.dim(f"  Alexandre e Felipe · v{__version__}"))
+    print(pal.dim(f"  Alexandre (@xandoqa) e Felipe · v{__version__}"))
 
     mode = args.modo or ask_choice(
         "O que vamos treinar?",

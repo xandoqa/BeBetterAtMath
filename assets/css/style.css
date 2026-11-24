@@ -1368,6 +1368,7 @@ a {
 
 .pessoas {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--e4);
   margin: var(--e2) 0 0;
   padding: 0;
@@ -1378,8 +1379,29 @@ a {
   display: flex;
   align-items: center;
   gap: var(--e2);
-  font-weight: 700;
   font-family: var(--fonte-ui);
+}
+
+.pessoa__dados {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.pessoa__nome {
+  font-weight: 700;
+}
+
+.pessoa__handle {
+  font-family: var(--fonte-num);
+  font-size: 0.8rem;
+  color: var(--tinta-fraca);
+  text-decoration: none;
+}
+
+.pessoa__handle:hover {
+  color: var(--violeta);
+  text-decoration: underline;
 }
 
 .pessoa__inicial {

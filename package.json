@@ -5,8 +5,13 @@
   "description": "Treino diário de cálculo mental: trilha de lições, XP, ofensiva e conquistas.",
   "type": "module",
   "contributors": [
-    "Alexandre",
-    "Felipe"
+    {
+      "name": "Alexandre",
+      "url": "https://github.com/xandoqa"
+    },
+    {
+      "name": "Felipe"
+    }
   ],
   "license": "MIT",
   "scripts": {
@@ -17,6 +22,17 @@
     "test": "python3 -m unittest discover -s tools -v"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xandoqa/BeBetterAtMath.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xandoqa/BeBetterAtMath/issues"
+  },
+  "homepage": "https://github.com/xandoqa/BeBetterAtMath#readme",
+  "engines": {
+    "node": ">=20"
   }
 }

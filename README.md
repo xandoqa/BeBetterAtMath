@@ -13,7 +13,7 @@ Funciona no navegador, instala no celular e abre sem internet.
 ![Versão](https://img.shields.io/badge/vers%C3%A3o-3.0.0-6b3df5)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-00a894)
 
-Desenvolvido por **Alexandre** e **Felipe**
+Desenvolvido por **[Alexandre](https://github.com/xandoqa)** ([@xandoqa](https://github.com/xandoqa)) e **Felipe**
 
 </div>
 
@@ -214,6 +214,13 @@ regras e a progressão fora do navegador.
 | Testes | `unittest`, Playwright | Regras testadas sem navegador; a interface, com um de verdade. |
 
 ---
+
+## Quem fez
+
+| | |
+| --- | --- |
+| **Alexandre** — [@xandoqa](https://github.com/xandoqa) | Desenvolvimento e design |
+| **Felipe** | Desenvolvimento |
 
 ## Licença
 

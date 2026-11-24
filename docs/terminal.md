@@ -32,7 +32,7 @@ Sem opções, ele pergunta no terminal. Com todas, começa direto.
 
 ```
   be better at math
-  Alexandre e Felipe · v2.1.0
+  Alexandre (@xandoqa) e Felipe · v3.0.0
 
 Tabuada · Fácil
 10 contas. Enter vazio pula a conta.

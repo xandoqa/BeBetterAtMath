@@ -17,8 +17,14 @@ jobs:
         with:
           node-version: "22"
 
+      # Versão exata, sem ^: o build commitado precisa bater com o que a
+      # CI gera, e compiladores diferentes produzem saídas diferentes.
+      # Era a causa de a checagem abaixo falhar.
       - name: Instalar o compilador
-        run: npm install --no-package-lock
+        run: npm install --no-package-lock --no-audit --no-fund
+
+      - name: Conferir a versão do compilador
+        run: npx tsc --version
 
       - name: Checar os tipos
         run: npm run check
