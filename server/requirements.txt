@@ -1,7 +1,7 @@
 # API do placar compartilhado
 # Versões fixadas para que o build do contêiner seja reproduzível.
 
-fastapi==0.115.6
+fastapi==0.165.0
 uvicorn[standard]==0.34.0
 psycopg[binary]==3.2.3
 psycopg-pool==3.2.4
