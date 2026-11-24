@@ -8,8 +8,18 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Variáveis de ambiente — NUNCA versionar: o .env guarda a senha do banco.
+# Só o .env.example, sem segredo nenhum, fica no repositório.
+.env
+.env.*
+!.env.example
+
 # Editores
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
 .idea/
 *.swp
 
