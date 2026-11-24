@@ -58,6 +58,49 @@ if errorlevel 1 (
     exit /b 1
 )
 
+REM --- Senha do banco -------------------------------------------------
+REM O compose recusa subir sem POSTGRES_PASSWORD, de proposito: um banco
+REM com senha "bbam" e um banco sem senha. Geramos uma forte no primeiro uso.
+
+if not exist ".env" (
+    echo   Primeira execucao: gerando uma senha para o banco...
+
+    for /f "usebackq delims=" %%P in (`powershell -NoProfile -Command ^
+        "[Convert]::ToBase64String((1..24 ^| ForEach-Object {Get-Random -Max 256})) -replace '[/+=]','' ^| ForEach-Object {$_.Substring(0,[Math]::Min(24,$_.Length))}"`) do set "SENHA=%%P"
+
+    if not defined SENHA (
+        echo   [X] Nao consegui gerar uma senha aleatoria.
+        echo       Crie o .env a mao, copiando o .env.example e pondo uma senha sua.
+        exit /b 1
+    )
+
+    (
+        echo # Gerado por iniciar.bat.
+        echo # Este arquivo NAO vai para o Git. Guarde a senha se precisar dela.
+        echo.
+        echo POSTGRES_USER=bbam
+        echo POSTGRES_PASSWORD=!SENHA!
+        echo POSTGRES_DB=bbam
+        echo POSTGRES_PORT=5432
+        echo API_PORT=8000
+        echo WEB_PORT=8080
+        echo RATE_LIMIT=30
+    ) > .env
+
+    echo   [ok] .env criado com senha aleatoria
+
+    REM Um volume que ja existe foi criado com OUTRA senha.
+    docker volume inspect bbam-dados-postgres >nul 2>&1
+    if not errorlevel 1 (
+        echo.
+        echo   [X] Ja existe um banco criado com outra senha.
+        echo       O PostgreSQL guarda a senha no volume, entao a nova nao vale.
+        echo       1. Recomecar o banco:  parar.bat --apagar-dados ^&^& iniciar.bat
+        echo       2. Manter os dados:    edite o .env e ponha a senha antiga
+        exit /b 1
+    )
+)
+
 REM --- Portas (valores padrao; mude no .env se precisar) --------------
 
 set "WEB_PORT=8080"

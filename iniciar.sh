@@ -51,6 +51,63 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
+# --- Senha do banco ----------------------------------------------------
+#
+# O compose recusa subir sem POSTGRES_PASSWORD, de propósito: um banco
+# com senha "bbam" é um banco sem senha. Aqui geramos uma forte no
+# primeiro uso, para que isso não custe um passo manual.
+
+if [ ! -f .env ]; then
+  info "Primeira execução: gerando uma senha para o banco..."
+
+  if command -v openssl >/dev/null 2>&1; then
+    SENHA=$(openssl rand -base64 24 | tr -d '/+=' | cut -c1-24)
+  elif [ -r /dev/urandom ]; then
+    SENHA=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 24)
+  else
+    erro "Não achei como gerar uma senha aleatória (sem openssl e sem /dev/urandom)."
+    info "Crie o .env à mão a partir do .env.example, com uma senha sua."
+    exit 1
+  fi
+
+  umask 077   # o .env nasce legível só por você
+  {
+    echo "# Gerado por ./iniciar.sh em $(date '+%Y-%m-%d %H:%M')."
+    echo "# Este arquivo NÃO vai para o Git. Guarde a senha se precisar dela."
+    echo ""
+    echo "POSTGRES_USER=bbam"
+    echo "POSTGRES_PASSWORD=$SENHA"
+    echo "POSTGRES_DB=bbam"
+    echo "POSTGRES_PORT=5432"
+    echo "API_PORT=8000"
+    echo "WEB_PORT=8080"
+    echo "RATE_LIMIT=30"
+  } > .env
+  umask 022
+
+  ok ".env criado com senha aleatória de 24 caracteres"
+
+  # Um volume que já existe foi criado com OUTRA senha: o banco não vai
+  # aceitar a nova, e o erro apareceria como "password authentication
+  # failed" sem explicação nenhuma.
+  if docker volume inspect bbam-dados-postgres >/dev/null 2>&1; then
+    printf "\n"
+    erro "Já existe um banco criado com outra senha."
+    info "O PostgreSQL guarda a senha no volume, então a nova não vale para ele."
+    info "Escolha um dos caminhos:"
+    info "  1. Recomeçar o banco:  ./parar.sh --apagar-dados && ./iniciar.sh"
+    info "  2. Manter os dados:    edite o .env e ponha a senha antiga"
+    exit 1
+  fi
+fi
+
+# O compose lê o .env sozinho, mas os comandos deste script precisam das
+# variáveis para checar portas e falar com o banco.
+set -a
+# shellcheck disable=SC1091
+. ./.env
+set +a
+
 # --- Portas ocupadas ---------------------------------------------------
 
 porta_ocupada() {

@@ -14,14 +14,25 @@ services:
     image: postgres:16-alpine
     container_name: bbam-db
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bbam}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bbam}
+      # Sem padrão de propósito: o compose recusa subir se a variável não
+      # existir, em vez de criar um banco com a senha "bbam" que ninguém
+      # lembra de trocar. O ./iniciar.sh gera uma senha forte no primeiro
+      # uso, então na prática isto nunca incomoda.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env — rode ./iniciar.sh para gerar uma}
       POSTGRES_DB: ${POSTGRES_DB:-bbam}
       # Acelera o primeiro boot; não vale para produção.
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      # Só a máquina local. Sem o 127.0.0.1, o Docker publica em todas as
+      # interfaces: num café ou numa rede de faculdade, qualquer um na
+      # mesma rede alcança o banco — e a senha é a do .env.
+      # A API fala com o banco pela rede interna do compose, não por aqui;
+      # esta porta existe só para você abrir o psql ou um cliente gráfico.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - dados-postgres:/var/lib/postgresql/data
       # Só roda quando o volume está vazio.
@@ -37,13 +48,24 @@ services:
     build: ./server
     container_name: bbam-api
     restart: unless-stopped
+    # A API não precisa escalar privilégio nem escrever no próprio disco.
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bbam}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bbam}
+      # Sem padrão de propósito: o compose recusa subir se a variável não
+      # existir, em vez de criar um banco com a senha "bbam" que ninguém
+      # lembra de trocar. O ./iniciar.sh gera uma senha forte no primeiro
+      # uso, então na prática isto nunca incomoda.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env — rode ./iniciar.sh para gerar uma}
       POSTGRES_DB: ${POSTGRES_DB:-bbam}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:${WEB_PORT:-8080}}
+      RATE_LIMIT: ${RATE_LIMIT:-30}
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:
@@ -61,6 +83,8 @@ services:
     image: nginx:1.27-alpine
     container_name: bbam-web
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     ports:
       - "${WEB_PORT:-8080}:80"
     volumes:
