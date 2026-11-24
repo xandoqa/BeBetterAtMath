@@ -10,6 +10,49 @@ A numeração segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/)
 
 ---
 
+## [3.1.0] — 2026-11-24
+
+Endurecimento de segurança. Nenhuma mudança de comportamento para quem
+joga; muda o que o projeto aceita de fora.
+
+### Segurança
+
+- **O banco não tem mais senha padrão.** O compose recusa subir sem
+  `POSTGRES_PASSWORD`, e o `iniciar.sh` (e o `.bat`) gera uma aleatória
+  de 24 caracteres na primeira execução, com permissão `600`. Um banco
+  com senha `bbam` é um banco sem senha.
+- **O PostgreSQL deixou de ficar exposto na rede.** A porta era publicada
+  em todas as interfaces: numa rede compartilhada, qualquer um alcançava
+  o banco. Agora só `127.0.0.1`.
+- **Limite de 30 requisições por minuto, por IP**, no endpoint de escrita
+  — que é público. Lê o IP real do `X-Forwarded-For` atrás do nginx.
+- **CORS deixou de liberar qualquer origem por padrão.** Era `*`; agora é
+  o localhost do compose, e abrir é decisão explícita.
+- **Política de conteúdo restritiva** no nginx, mais `X-Frame-Options`,
+  `Permissions-Policy` e `server_tokens off`. O app foi testado inteiro
+  sob ela, sem violação.
+- **Contêineres sem privilégio desnecessário**: `no-new-privileges` nos
+  três, e a API com sistema de arquivos somente leitura.
+- **Credencial fixa removida do `.vscode/launch.json`**, que era
+  versionado. Agora lê o `.env`.
+
+### Adicionado
+
+- `tools/checar_segredos.py` — procura chave privada, token de
+  GitHub/AWS/Slack/OpenAI/Anthropic, URL com senha e senha literal
+- `tools/instalar_hooks.py` — instala o gancho de pre-commit
+- Job de CI que varre o histórico inteiro e reprova se houver `.env`
+- `SECURITY.md`, com o que está protegido e as **limitações conhecidas**
+- `.github/dependabot.yml` para avisos de correção de dependência
+
+### Corrigido
+
+- A CI falhava na checagem de build: o `package.json` declarava
+  `typescript: ^5.6.0`, mas o build versionado saiu de outra versão do
+  compilador. Versão agora exata, com um passo que imprime qual rodou.
+
+---
+
 ## [3.0.0] — 2026-11-24
 
 Reformulação da experiência inteira, com progressão real. A versão é maior
@@ -190,6 +233,7 @@ Primeira versão publicada.
 - Modo de números aleatórios com soma, multiplicação e divisão.
 - Verificação de resposta com mensagem de erro.
 
+[3.1.0]: https://github.com/xandoqa/BeBetterAtMath/releases/tag/v3.1.0
 [3.0.0]: https://github.com/xandoqa/BeBetterAtMath/releases/tag/v3.0.0
 [2.1.0]: https://github.com/xandoqa/BeBetterAtMath/releases/tag/v2.1.0
 [2.0.0]: https://github.com/xandoqa/BeBetterAtMath/releases/tag/v2.0.0

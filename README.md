@@ -183,6 +183,19 @@ regras e a progressão fora do navegador.
 
 ---
 
+## Segurança
+
+O `.env` **nunca** é versionado, e o `./iniciar.sh` gera uma senha
+aleatória de 24 caracteres na primeira execução — não existe senha padrão.
+Para travar segredo antes de qualquer commit:
+
+```bash
+python3 tools/instalar_hooks.py
+```
+
+Detalhes, limitações conhecidas e como avisar sobre uma falha em
+**[SECURITY.md](SECURITY.md)**.
+
 ## Documentação
 
 | Documento | Assunto |
@@ -198,6 +211,7 @@ regras e a progressão fora do navegador.
 | [docs/desenvolvimento.md](docs/desenvolvimento.md) | Build, testes, CI e publicação |
 | [docs/terminal.md](docs/terminal.md) | A versão em Python |
 | [docs/problemas.md](docs/problemas.md) | Erros comuns e como resolver |
+| [SECURITY.md](SECURITY.md) | O que está protegido, limitações e como reportar |
 | [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
 
 ---

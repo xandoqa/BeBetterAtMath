@@ -14,7 +14,7 @@
  * activate apaga os caches antigos e o app recarrega limpo.
  */
 
-const VERSAO = "3.0.0";
+const VERSAO = "3.1.0";
 const CACHE = `bbam-${VERSAO}`;
 
 /** O mínimo para o app abrir offline. */

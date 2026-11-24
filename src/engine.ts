@@ -10,7 +10,7 @@
 
 /** Versão do projeto. Ao publicar, atualize os cinco lugares listados
  *  em docs/desenvolvimento.md. */
-export const VERSION = "3.0.0";
+export const VERSION = "3.1.0";
 
 export type Mode = "tabuada" | "random";
 export type Level = "easy" | "medium" | "hard";
