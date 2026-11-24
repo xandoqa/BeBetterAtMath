@@ -1,0 +1,52 @@
+{
+  "name": "Be Better at Math",
+  "short_name": "BBAM",
+  "description": "Treino diário de cálculo mental: tabuada e as quatro operações, com trilha de lições, XP e conquistas.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf9ff",
+  "theme_color": "#6b3df5",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "assets/img/icone.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icone-mascara.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Treino livre",
+      "short_name": "Livre",
+      "url": "./index.html#/livre"
+    },
+    {
+      "name": "Medalhas",
+      "short_name": "Medalhas",
+      "url": "./index.html#/medalhas"
+    }
+  ]
+}

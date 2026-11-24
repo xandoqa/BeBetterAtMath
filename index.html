@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Be Better at Math — treino de cálculo mental</title>
+
+  <meta name="description" content="Treino diário de cálculo mental: tabuada e as quatro operações, com trilha de lições, XP, ofensiva de dias e conquistas." />
+  <meta name="author" content="Alexandre e Felipe" />
+  <meta name="theme-color" content="#6B3DF5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#120E26" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light dark" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/img/icone.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="apple-touch-icon" href="assets/img/icone-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- ╌╌╌ MASCOTE: definição única, reaproveitada por <use> ╌╌╌ -->
+  <svg class="capi-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="capi-corpo">
+        <!-- orelhas: pequenas e bem no alto, como as de capivara -->
+        <ellipse cx="22" cy="30" rx="9" ry="7" class="capi-pelo-escuro" />
+        <ellipse cx="98" cy="30" rx="9" ry="7" class="capi-pelo-escuro" />
+        <!-- cabeça: mais larga que alta, de cantos retos -->
+        <rect x="10" y="26" width="100" height="74" rx="24" class="capi-pelo" />
+        <!-- focinho largo e chato: o traço que define a capivara -->
+        <rect x="32" y="60" width="56" height="38" rx="19" class="capi-focinho" />
+        <ellipse cx="50" cy="73" rx="3.6" ry="2.8" class="capi-narina" />
+        <ellipse cx="70" cy="73" rx="3.6" ry="2.8" class="capi-narina" />
+      </g>
+    </defs>
+  </svg>
+
+  <div class="moldura">
+
+    <!-- ╌╌╌ BARRA DE ESTADO ╌╌╌ -->
+    <header class="estado" data-estado hidden>
+      <div class="estado__marca">
+        <span class="estado__nivel" data-nivel-selo>1</span>
+        <span class="estado__xp-barra"><i data-nivel-barra style="transform:scaleX(0)"></i></span>
+      </div>
+
+      <p class="selo selo--ofensiva" data-ofensiva-selo title="Dias seguidos jogando">
+        <span class="selo__icone" aria-hidden="true">🔥</span>
+        <span class="selo__valor" data-ofensiva>0</span>
+        <span class="sr-only">dias seguidos</span>
+      </p>
+
+      <p class="selo selo--xp" title="Experiência acumulada">
+        <span class="selo__icone" aria-hidden="true">⚡</span>
+        <span class="selo__valor" data-xp>0</span>
+        <span class="sr-only">de experiência</span>
+      </p>
+    </header>
+
+    <main class="palco" id="conteudo">
+
+      <!-- ╌╌╌ ABERTURA ╌╌╌ -->
+      <section class="tela tela--abertura" data-tela="splash">
+        <div class="abertura__capi">
+          <svg class="capi capi--grande" data-humor="idle" viewBox="0 0 120 120" aria-label="Capi, a capivara mascote do app">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+          </svg>
+        </div>
+
+        <h1 class="logo">
+          <span class="logo__linha">Be Better</span>
+          <span class="logo__linha logo__linha--destaque">at Math</span>
+        </h1>
+        <p class="abertura__texto">Treino de cálculo mental, dez contas por vez.</p>
+        <button class="botao botao--principal" type="button" data-acao="comecar">Começar</button>
+        <p class="abertura__credito">por Alexandre e Felipe</p>
+      </section>
+
+      <!-- ╌╌╌ TRILHA ╌╌╌ -->
+      <section class="tela" data-tela="trilha" hidden>
+        <div class="meta" data-meta-cartao>
+          <div class="meta__texto">
+            <p class="meta__titulo">Meta de hoje</p>
+            <p class="meta__numero"><span data-meta-feito>0</span> / <span data-meta-alvo>50</span> XP</p>
+          </div>
+          <div class="meta__anel" data-meta-anel style="--parte:0">
+            <span data-meta-pct>0%</span>
+          </div>
+        </div>
+
+        <div class="trilha" data-trilha></div>
+
+        <p class="trilha__fim" data-trilha-fim hidden>
+          Trilha concluída. O treino livre continua aí para manter a prática.
+        </p>
+      </section>
+
+      <!-- ╌╌╌ TREINO LIVRE ╌╌╌ -->
+      <section class="tela" data-tela="livre" hidden>
+        <h2 class="titulo">Treino livre</h2>
+        <p class="apoio">Escolha o que treinar. Dez contas, cinco vidas.</p>
+
+        <fieldset class="grupo">
+          <legend class="grupo__rotulo">Operação</legend>
+          <div class="opcoes opcoes--operacoes" data-livre-operacoes role="radiogroup" aria-label="Operação"></div>
+        </fieldset>
+
+        <fieldset class="grupo">
+          <legend class="grupo__rotulo">Nível</legend>
+          <div class="opcoes opcoes--niveis" data-livre-niveis role="radiogroup" aria-label="Nível"></div>
+        </fieldset>
+
+        <div class="livre__recorde">
+          <span>Seu recorde aqui</span>
+          <strong data-livre-recorde>—</strong>
+        </div>
+
+        <button class="botao botao--principal" type="button" data-acao="comecar-livre">Treinar</button>
+      </section>
+
+      <!-- ╌╌╌ JOGO ╌╌╌ -->
+      <section class="tela tela--jogo" data-tela="jogo" hidden>
+        <header class="jogo__topo">
+          <button class="icone-botao" type="button" data-acao="sair-jogo" aria-label="Sair da rodada">
+            <span aria-hidden="true">✕</span>
+          </button>
+
+          <div class="progresso" role="progressbar" aria-label="Progresso da rodada" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" data-progresso-aria>
+            <i data-progresso style="transform:scaleX(0)"></i>
+          </div>
+
+          <p class="vidas" data-vidas aria-label="Vidas restantes"></p>
+        </header>
+
+        <div class="jogo__cena">
+          <svg class="capi" data-capi data-humor="idle" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <g class="capi-olhos-felizes">
+              <path d="M38 50 q6 -7 12 0" />
+              <path d="M70 50 q6 -7 12 0" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+            <path class="capi-boca-triste" d="M52 88 q8 -6 16 0" />
+          </svg>
+
+          <p class="conta" data-conta aria-live="polite">
+            <span class="conta__expr">—</span>
+          </p>
+
+          <form class="lacuna" data-forma novalidate>
+            <label class="sr-only" for="resposta">Resposta</label>
+            <input
+              class="lacuna__campo"
+              id="resposta"
+              data-resposta
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              placeholder="?"
+              aria-describedby="aviso"
+            />
+            <p class="aviso" id="aviso" data-aviso role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="teclado" data-teclado>
+          <button class="tecla" type="button" data-digito="1">1</button>
+          <button class="tecla" type="button" data-digito="2">2</button>
+          <button class="tecla" type="button" data-digito="3">3</button>
+          <button class="tecla" type="button" data-digito="4">4</button>
+          <button class="tecla" type="button" data-digito="5">5</button>
+          <button class="tecla" type="button" data-digito="6">6</button>
+          <button class="tecla" type="button" data-digito="7">7</button>
+          <button class="tecla" type="button" data-digito="8">8</button>
+          <button class="tecla" type="button" data-digito="9">9</button>
+          <button class="tecla tecla--secundaria" type="button" data-digito="-" aria-label="Sinal de menos">−</button>
+          <button class="tecla" type="button" data-digito="0">0</button>
+          <button class="tecla tecla--secundaria" type="button" data-acao="apagar" aria-label="Apagar">⌫</button>
+        </div>
+
+        <button class="botao botao--principal jogo__enviar" type="button" data-acao="responder">Verificar</button>
+
+        <!-- Painel de retorno: sobe de baixo, como no fim de uma questão -->
+        <div class="retorno" data-retorno hidden>
+          <p class="retorno__titulo" data-retorno-titulo></p>
+          <p class="retorno__detalhe" data-retorno-detalhe></p>
+          <button class="botao" type="button" data-acao="continuar">Continuar</button>
+        </div>
+      </section>
+
+      <!-- ╌╌╌ RESULTADO ╌╌╌ -->
+      <section class="tela tela--fim" data-tela="fim" hidden>
+        <div class="fim__cabeca" data-fim-cabeca>
+          <svg class="capi capi--grande" data-fim-capi data-humor="festa" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-felizes">
+              <path d="M38 50 q6 -7 12 0" />
+              <path d="M70 50 q6 -7 12 0" />
+            </g>
+            <path class="capi-boca" d="M50 84 q10 9 20 0" />
+          </svg>
+
+          <p class="fim__estrelas" data-fim-estrelas hidden></p>
+          <h2 class="fim__titulo" data-fim-titulo>Rodada concluída</h2>
+          <p class="fim__sub" data-fim-sub></p>
+        </div>
+
+        <p class="fim__xp"><span data-fim-xp>0</span><span class="fim__xp-unidade">XP</span></p>
+
+        <dl class="placar-grade">
+          <div class="placar-grade__item">
+            <dt>Acertos</dt>
+            <dd data-fim-acertos>0 de 10</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Pontos</dt>
+            <dd data-fim-pontos>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Maior sequência</dt>
+            <dd data-fim-sequencia>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Tempo</dt>
+            <dd data-fim-tempo>0s</dd>
+          </div>
+        </dl>
+
+        <p class="faixa faixa--recorde" data-fim-recorde hidden>Novo recorde nesta categoria</p>
+        <p class="faixa faixa--nivel" data-fim-nivel hidden></p>
+
+        <section class="fim__conquistas" data-fim-conquistas hidden>
+          <h3 class="subtitulo">Conquistas desbloqueadas</h3>
+          <ul class="medalhas medalhas--compacta" data-fim-conquistas-lista></ul>
+        </section>
+
+        <section class="revisar" data-revisar hidden>
+          <h3 class="subtitulo">Para revisar</h3>
+          <ul class="revisar__lista" data-revisar-lista></ul>
+        </section>
+
+        <!-- Placar compartilhado: só aparece com a API no ar -->
+        <section class="ranking" data-ranking hidden>
+          <h3 class="subtitulo">Placar compartilhado</h3>
+
+          <form class="ranking__entrar" data-apelido-forma hidden>
+            <label class="sr-only" for="apelido">Seu apelido no placar</label>
+            <input class="campo" id="apelido" data-apelido type="text" maxlength="24" minlength="2"
+                   placeholder="Escolha um apelido" autocomplete="nickname" required />
+            <button class="botao botao--compacto" type="submit">Entrar no placar</button>
+          </form>
+
+          <ol class="ranking__lista" data-ranking-lista></ol>
+          <p class="apoio apoio--miudo" data-ranking-nota></p>
+        </section>
+
+        <div class="fim__acoes">
+          <button class="botao botao--principal" type="button" data-acao="seguir">Continuar</button>
+          <button class="botao botao--vazado" type="button" data-acao="repetir">Jogar de novo</button>
+        </div>
+      </section>
+
+      <!-- ╌╌╌ MEDALHAS ╌╌╌ -->
+      <section class="tela" data-tela="medalhas" hidden>
+        <h2 class="titulo">Medalhas</h2>
+        <p class="apoio"><span data-medalhas-contagem>0 de 0</span> conquistadas</p>
+        <ul class="medalhas" data-medalhas-lista></ul>
+      </section>
+
+      <!-- ╌╌╌ PERFIL ╌╌╌ -->
+      <section class="tela" data-tela="eu" hidden>
+        <div class="perfil">
+          <svg class="capi" data-humor="idle" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+          </svg>
+          <div>
+            <h2 class="titulo titulo--compacto" data-perfil-nome>Jogador</h2>
+            <p class="apoio" data-perfil-nivel>Nível 1</p>
+          </div>
+        </div>
+
+        <dl class="placar-grade">
+          <div class="placar-grade__item">
+            <dt>Rodadas</dt>
+            <dd data-perfil-rodadas>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Contas respondidas</dt>
+            <dd data-perfil-contas>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Precisão</dt>
+            <dd data-perfil-precisao>0%</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Maior ofensiva</dt>
+            <dd data-perfil-ofensiva>0 dias</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Lições</dt>
+            <dd data-perfil-licoes>0 de 24</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Rodadas perfeitas</dt>
+            <dd data-perfil-perfeitas>0</dd>
+          </div>
+        </dl>
+
+        <h3 class="subtitulo">Meta diária</h3>
+        <div class="opcoes opcoes--metas" data-metas role="radiogroup" aria-label="Meta diária de XP"></div>
+
+        <h3 class="subtitulo">Ajustes</h3>
+        <ul class="ajustes">
+          <li class="ajuste">
+            <span class="ajuste__nome">Tema</span>
+            <button class="chip" type="button" data-acao="tema" data-tema-rotulo>Automático</button>
+          </li>
+          <li class="ajuste">
+            <span class="ajuste__nome">Som e vibração</span>
+            <button class="chip" type="button" data-acao="som" role="switch" data-som-rotulo>Ligado</button>
+          </li>
+          <li class="ajuste">
+            <span class="ajuste__nome">Teclado na tela</span>
+            <button class="chip" type="button" data-acao="teclado" role="switch" data-teclado-rotulo>Ligado</button>
+          </li>
+        </ul>
+
+        <p class="aviso aviso--atencao" data-sem-armazenamento hidden>
+          Este navegador não está deixando guardar dados, então o progresso vale só
+          para esta sessão. Em janela anônima isso é esperado.
+        </p>
+
+        <h3 class="subtitulo">Sobre</h3>
+        <p class="apoio">
+          Be Better at Math é um treino curto de cálculo mental. Cada rodada tem dez
+          contas e cinco vidas: você ganha XP por acerto, mantém a ofensiva jogando
+          todo dia e destrava a trilha concluindo lição por lição. O progresso fica
+          salvo neste aparelho.
+        </p>
+
+        <ul class="pessoas">
+          <li class="pessoa"><span class="pessoa__inicial" aria-hidden="true">A</span>Alexandre</li>
+          <li class="pessoa"><span class="pessoa__inicial" aria-hidden="true">F</span>Felipe</li>
+        </ul>
+
+        <div class="perfil__rodape">
+          <button class="botao botao--vazado botao--perigo" type="button" data-acao="zerar">
+            Começar do zero
+          </button>
+          <p class="apoio apoio--miudo">
+            <span data-versao>Versão 3.0.0</span> ·
+            <a href="https://github.com/xandoqa/BeBetterAtMath">Código no GitHub</a>
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ╌╌╌ NAVEGAÇÃO INFERIOR ╌╌╌ -->
+    <nav class="navegacao" data-navegacao aria-label="Seções" hidden>
+      <button class="navegacao__item" type="button" data-ir="trilha">
+        <span class="navegacao__icone" aria-hidden="true">🗺️</span>
+        <span class="navegacao__nome">Trilha</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="livre">
+        <span class="navegacao__icone" aria-hidden="true">🎲</span>
+        <span class="navegacao__nome">Livre</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="medalhas">
+        <span class="navegacao__icone" aria-hidden="true">🏅</span>
+        <span class="navegacao__nome">Medalhas</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="eu">
+        <span class="navegacao__icone" aria-hidden="true">🙂</span>
+        <span class="navegacao__nome">Eu</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Avisos passageiros (nível novo, conquista, ofensiva) -->
+  <div class="torradas" data-torradas aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Compilado de src/*.ts — rode `npm run build` após editar a fonte. -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

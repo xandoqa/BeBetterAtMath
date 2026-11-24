@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": false,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[python]": { "editor.tabSize": 4 },
+  "[typescript]": { "editor.tabSize": 2 },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.js.map": true
+  },
+  "search.exclude": {
+    "assets/js": true,
+    "node_modules": true
+  }
+}
