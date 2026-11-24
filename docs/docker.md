@@ -1,6 +1,6 @@
 # Docker — como rodar tudo
 
-Versão 2.1.0
+Versão 3.0.0
 
 O Docker sobe três coisas de uma vez: o banco, a API do placar e o site.
 É **opcional** — o jogo funciona sem nada disso, só sem o placar compartilhado.

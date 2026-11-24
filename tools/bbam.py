@@ -24,7 +24,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Final
 
-__version__: Final = "2.1.0"
+__version__: Final = "3.0.0"
 
 ROUND_LENGTH: Final = 10
 RECORDS_PATH: Final = Path.home() / ".bebetteratmath.json"

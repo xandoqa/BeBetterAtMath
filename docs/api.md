@@ -1,6 +1,6 @@
 # API do placar
 
-Versão 2.1.0 · FastAPI + psycopg 3
+Versão 3.0.0 · FastAPI + psycopg 3
 
 Recebe as rodadas terminadas e devolve o ranking. Fica em `server/app.py`.
 
@@ -41,7 +41,7 @@ Guarda uma rodada terminada.
   "modo": "tabuada",
   "nivel": "easy",
   "operacao": "mul",
-  "pontos": 176,
+  "pontos": 170,
   "acertos": 10,
   "total": 10,
   "maior_seq": 10,
@@ -52,7 +52,7 @@ Guarda uma rodada terminada.
 Resposta `201`:
 
 ```json
-{ "id": 42, "posicao": 1, "melhor_pessoal": 176 }
+{ "id": 42, "posicao": 1, "melhor_pessoal": 170 }
 ```
 
 `posicao` é a colocação do jogador naquela categoria depois desta rodada.
@@ -75,7 +75,7 @@ GET /api/ranking?modo=random&operacao=div&nivel=medium&limite=5
 
 ```json
 [
-  { "posicao": 1, "apelido": "Alexandre", "pontos": 176,
+  { "posicao": 1, "apelido": "Alexandre", "pontos": 170,
     "acertos": 10, "total": 10, "maior_seq": 10, "duracao_ms": 38000 }
 ]
 ```
