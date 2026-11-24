@@ -86,6 +86,18 @@ class TestScoring(unittest.TestCase):
     def test_pontos_nao_ficam_negativos(self) -> None:
         self.assertEqual(points_for(0), 10)
 
+    def test_maximo_de_uma_rodada(self) -> None:
+        """O teto que a API usa para recusar pontuação impossível.
+
+        A v2.1.0 documentava 176 por engano. Este teste fixa o valor
+        certo contra a soma termo a termo.
+        """
+        maximo = sum(points_for(s) for s in range(1, ROUND_LENGTH + 1))
+        self.assertEqual(maximo, 170)
+        self.assertEqual(maximo, 10 + 12 + 14 + 16 + 18 + 20 * 5)
+        # Nunca pode passar de 20 por conta — é o limite do CHECK no banco.
+        self.assertLessEqual(maximo, ROUND_LENGTH * 20)
+
     def test_precisao(self) -> None:
         self.assertEqual(accuracy(7, 10), 70)
         self.assertEqual(accuracy(0, 0), 0, "rodada vazia não pode dividir por zero")
