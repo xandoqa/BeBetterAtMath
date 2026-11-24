@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Be Better at Math">
+  <rect width="512" height="512" rx="112" fill="#6b3df5" />
+
+  <!-- Capi, a capivara -->
+  <g transform="translate(106 118) scale(2.5)">
+    <ellipse cx="22" cy="30" rx="9" ry="7" fill="#8b5f30" />
+    <ellipse cx="98" cy="30" rx="9" ry="7" fill="#8b5f30" />
+    <rect x="10" y="26" width="100" height="74" rx="24" fill="#a8763f" />
+    <rect x="32" y="60" width="56" height="38" rx="19" fill="#c99460" />
+    <ellipse cx="50" cy="73" rx="3.6" ry="2.8" fill="#5c3c1c" />
+    <ellipse cx="70" cy="73" rx="3.6" ry="2.8" fill="#5c3c1c" />
+    <path d="M38 50 q6 -7 12 0" fill="none" stroke="#2a1c0c" stroke-width="3.4" stroke-linecap="round" />
+    <path d="M70 50 q6 -7 12 0" fill="none" stroke="#2a1c0c" stroke-width="3.4" stroke-linecap="round" />
+    <path d="M50 83 q10 9 20 0" fill="none" stroke="#2a1c0c" stroke-width="3.4" stroke-linecap="round" />
+  </g>
+</svg>

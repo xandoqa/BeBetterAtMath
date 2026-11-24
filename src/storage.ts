@@ -1,14 +1,19 @@
 /**
- * Recordes e preferências, guardados no próprio aparelho.
+ * Persistência local: recordes, progresso e preferências.
  *
- * Todo acesso passa por try/catch: em janela anônima ou com os dados do
- * site bloqueados, o localStorage lança em vez de retornar vazio, e o
- * jogo precisa continuar funcionando sem ele.
+ * Todo acesso passa por try/catch. Em janela anônima, ou com os dados do
+ * site bloqueados, o localStorage **lança** em vez de devolver vazio — e
+ * o jogo precisa continuar funcionando sem ele, só sem guardar nada.
+ *
+ * As chaves da v2 (`bbam:best:*`) continuam sendo lidas e escritas: quem
+ * já tinha recordes não os perde ao atualizar.
  */
 
 import type { Level, Mode, Operation, RoundResult } from "./engine.js";
+import { emptyProgress, type ProgressState } from "./progress.js";
 
 const PREFIX = "bbam";
+const PROGRESS_KEY = `${PREFIX}:progress:v3`;
 
 export type ThemeChoice = "auto" | "light" | "dark";
 
@@ -20,6 +25,8 @@ export interface BestScore {
   /** ISO 8601. */
   readonly date: string;
 }
+
+/* --- Acesso cru ----------------------------------------------------- */
 
 function read(key: string): string | null {
   try {
@@ -33,9 +40,44 @@ function write(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value);
   } catch {
-    /* sem armazenamento: o jogo segue, só não guarda nada */
+    /* sem armazenamento: o jogo segue, só não guarda */
   }
 }
+
+function remove(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    /* idem */
+  }
+}
+
+function keys(): string[] {
+  try {
+    const found: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key) found.push(key);
+    }
+    return found;
+  } catch {
+    return [];
+  }
+}
+
+/** Diz se o navegador deixa guardar algo. Usado para avisar o jogador. */
+export function isStorageAvailable(): boolean {
+  try {
+    const probe = `${PREFIX}:probe`;
+    window.localStorage.setItem(probe, "1");
+    window.localStorage.removeItem(probe);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* --- Recordes por categoria (compatível com a v2) -------------------- */
 
 function recordKey(mode: Mode, operation: Operation, level: Level): string {
   return `${PREFIX}:best:${mode}:${mode === "tabuada" ? "mul" : operation}:${level}`;
@@ -55,9 +97,9 @@ export function getBest(mode: Mode, operation: Operation, level: Level): BestSco
   return null;
 }
 
-/** Salva o resultado se ele superar o recorde. Retorna true se for recorde novo. */
+/** Salva o resultado se superar o recorde. Retorna true se for recorde novo. */
 export function saveIfBest(result: RoundResult): boolean {
-  // zero ponto nunca é recorde, mesmo na primeira rodada
+  // Zero ponto nunca é recorde, mesmo na primeira rodada.
   if (result.score <= 0) return false;
 
   const previous = getBest(result.mode, result.operation, result.level);
@@ -75,17 +117,54 @@ export function saveIfBest(result: RoundResult): boolean {
 }
 
 export function clearRecords(): void {
+  keys()
+    .filter((key) => key.startsWith(`${PREFIX}:best:`))
+    .forEach(remove);
+}
+
+/* --- Progresso ------------------------------------------------------- */
+
+/**
+ * Lê o progresso, completando campos que faltarem.
+ *
+ * Um estado salvo por uma versão anterior pode não ter todas as chaves de
+ * hoje; mesclar com o estado vazio evita `undefined` solto no meio de uma
+ * conta de XP, que apareceria como NaN na tela.
+ */
+export function loadProgress(): ProgressState {
+  const base = emptyProgress();
+  const raw = read(PROGRESS_KEY);
+  if (!raw) return base;
+
   try {
-    const keys: string[] = [];
-    for (let i = 0; i < window.localStorage.length; i += 1) {
-      const key = window.localStorage.key(i);
-      if (key?.startsWith(`${PREFIX}:best:`)) keys.push(key);
-    }
-    keys.forEach((key) => window.localStorage.removeItem(key));
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return base;
+    const saved = parsed as Partial<ProgressState>;
+
+    return {
+      ...base,
+      ...saved,
+      correctByOperation: { ...base.correctByOperation, ...saved.correctByOperation },
+      lessons: { ...base.lessons, ...saved.lessons },
+      achievements: { ...base.achievements, ...saved.achievements },
+      // Números que vieram corrompidos voltam ao padrão.
+      xp: Number.isFinite(saved.xp) ? Number(saved.xp) : base.xp,
+      dailyGoal: Number.isFinite(saved.dailyGoal) ? Number(saved.dailyGoal) : base.dailyGoal,
+    };
   } catch {
-    /* nada a limpar */
+    return base;
   }
 }
+
+export function saveProgress(state: ProgressState): void {
+  write(PROGRESS_KEY, JSON.stringify(state));
+}
+
+export function clearProgress(): void {
+  remove(PROGRESS_KEY);
+}
+
+/* --- Preferências ---------------------------------------------------- */
 
 /** Apelido usado no placar compartilhado, se o jogador já escolheu um. */
 export function getNickname(): string | null {
@@ -104,4 +183,27 @@ export function getTheme(): ThemeChoice {
 
 export function setTheme(choice: ThemeChoice): void {
   write(`${PREFIX}:theme`, choice);
+}
+
+export function isSoundOn(): boolean {
+  return read(`${PREFIX}:sound`) !== "off";
+}
+
+export function setSoundOn(on: boolean): void {
+  write(`${PREFIX}:sound`, on ? "on" : "off");
+}
+
+export function isKeypadOn(): boolean {
+  return read(`${PREFIX}:keypad`) !== "off";
+}
+
+export function setKeypadOn(on: boolean): void {
+  write(`${PREFIX}:keypad`, on ? "on" : "off");
+}
+
+/** Apaga tudo o que o app guardou. Usado no "começar do zero". */
+export function clearEverything(): void {
+  keys()
+    .filter((key) => key.startsWith(`${PREFIX}:`))
+    .forEach(remove);
 }

@@ -1,13 +1,19 @@
 /**
- * Regras do jogo — sem nenhuma dependência do DOM.
+ * Regras de uma rodada — sem nenhuma dependência do DOM.
  *
- * Isolar a lógica aqui permite testá-la fora do navegador e manter
- * a versão de terminal (tools/bbam.py) com o mesmo comportamento.
+ * Isolar as regras aqui permite testá-las fora do navegador e manter a
+ * versão de terminal (tools/bbam.py) com o mesmo comportamento.
+ *
+ * Progressão (XP, níveis, ofensiva, conquistas) NÃO mora aqui: é outro
+ * assunto, e fica em progress.ts.
  */
-/** Versão do projeto. Mantenha em sincronia com package.json,
- *  tools/bbam.py e CHANGELOG.md ao publicar. */
-export const VERSION = "2.1.0";
+/** Versão do projeto. Ao publicar, atualize os cinco lugares listados
+ *  em docs/desenvolvimento.md. */
+export const VERSION = "3.0.0";
+/** Contas por rodada. */
 export const ROUND_LENGTH = 10;
+/** Vidas por rodada. Erra, perde uma; sem vidas, a rodada termina. */
+export const MAX_HEARTS = 5;
 export const LEVELS = {
     easy: { label: "Fácil", min: 1, max: 10 },
     medium: { label: "Médio", min: 10, max: 50 },
@@ -20,13 +26,22 @@ export const OPERATION_LABELS = {
     div: "Divisão",
     mix: "Misto",
 };
-const SYMBOLS = {
+export const OPERATION_SYMBOLS = {
     sum: "+",
     sub: "−",
     mul: "×",
     div: "÷",
 };
 const MIX_POOL = ["sum", "sub", "mul", "div"];
+const BY_SYMBOL = new Map(Object.entries(OPERATION_SYMBOLS).map(([op, symbol]) => [
+    symbol,
+    op,
+]));
+/** Qual operação um símbolo representa. Usado para contar acertos por
+ *  operação quando a rodada é mista. */
+export function operationOf(symbol) {
+    return BY_SYMBOL.get(symbol);
+}
 /** Inteiro entre min e max, ambos inclusive. */
 export function randInt(min, max, rng = Math.random) {
     const lo = Math.ceil(Math.min(min, max));
@@ -34,7 +49,8 @@ export function randInt(min, max, rng = Math.random) {
     return lo + Math.floor(rng() * (hi - lo + 1));
 }
 function build(a, b, op, answer) {
-    return { a, b, symbol: SYMBOLS[op], answer, text: `${a} ${SYMBOLS[op]} ${b}` };
+    const symbol = OPERATION_SYMBOLS[op];
+    return { a, b, symbol, answer, text: `${a} ${symbol} ${b}` };
 }
 /**
  * Monta uma conta respeitando a faixa do nível.
@@ -76,11 +92,22 @@ export function makeQuestion(mode, level, operation = "mul", rng = Math.random) 
 }
 /**
  * Pontos de um acerto. `streak` é a sequência já contando este acerto.
- * Base de 10, mais 2 por acerto seguido, com teto de 20 para que a
- * pontuação não dispare.
+ * Base de 10, mais 2 por acerto seguido, com teto de 20 para que uma
+ * sequência longa de sorte não torne o recorde inalcançável depois.
  */
 export function pointsFor(streak) {
     return 10 + Math.min(Math.max(streak - 1, 0), 5) * 2;
+}
+/**
+ * Pontuação máxima possível numa rodada de `total` contas — todas certas,
+ * em sequência. Serve para a API recusar pontuação impossível: sem isso,
+ * qualquer um pode enviar um número inventado e dominar o placar.
+ */
+export function maxScoreFor(total = ROUND_LENGTH) {
+    let sum = 0;
+    for (let streak = 1; streak <= total; streak += 1)
+        sum += pointsFor(streak);
+    return sum;
 }
 /** Percentual de acertos, arredondado. */
 export function accuracy(hits, total) {
@@ -97,5 +124,10 @@ export function formatDuration(ms) {
 export function describeRound(mode, level, operation) {
     const parts = mode === "tabuada" ? ["Tabuada"] : ["Números aleatórios", OPERATION_LABELS[operation]];
     return [...parts, LEVELS[level].label].join(" · ");
+}
+/** Rótulo curto, para espaços apertados: "Tabuada · Fácil". */
+export function describeShort(mode, level, operation) {
+    const head = mode === "tabuada" ? "Tabuada" : OPERATION_LABELS[operation];
+    return `${head} · ${LEVELS[level].label}`;
 }
 //# sourceMappingURL=engine.js.map

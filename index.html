@@ -5,300 +5,409 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Be Better at Math — treino de cálculo mental</title>
 
-  <meta name="description" content="Treino de cálculo mental: tabuada e operações aleatórias com pontuação, sequência de acertos e recordes salvos no seu aparelho." />
+  <meta name="description" content="Treino diário de cálculo mental: tabuada e as quatro operações, com trilha de lições, XP, ofensiva de dias e conquistas." />
   <meta name="author" content="Alexandre e Felipe" />
-  <meta name="theme-color" content="#1B3A6B" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0E1726" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#6B3DF5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#120E26" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light dark" />
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B3A6B'/%3E%3Cpath d='M10 10l12 12M22 10L10 22' stroke='%23F7F7F4' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/img/icone.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="apple-touch-icon" href="assets/img/icone-192.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Darker+Grotesque:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-  <main class="app" id="conteudo">
+  <!-- ╌╌╌ MASCOTE: definição única, reaproveitada por <use> ╌╌╌ -->
+  <svg class="capi-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="capi-corpo">
+        <!-- orelhas: pequenas e bem no alto, como as de capivara -->
+        <ellipse cx="22" cy="30" rx="9" ry="7" class="capi-pelo-escuro" />
+        <ellipse cx="98" cy="30" rx="9" ry="7" class="capi-pelo-escuro" />
+        <!-- cabeça: mais larga que alta, de cantos retos -->
+        <rect x="10" y="26" width="100" height="74" rx="24" class="capi-pelo" />
+        <!-- focinho largo e chato: o traço que define a capivara -->
+        <rect x="32" y="60" width="56" height="38" rx="19" class="capi-focinho" />
+        <ellipse cx="50" cy="73" rx="3.6" ry="2.8" class="capi-narina" />
+        <ellipse cx="70" cy="73" rx="3.6" ry="2.8" class="capi-narina" />
+      </g>
+    </defs>
+  </svg>
 
-    <!-- ╌╌╌ ABERTURA ╌╌╌ -->
-    <section id="splash" class="screen screen--center" data-screen="splash">
-      <p class="wordmark">
-        <span class="wordmark__line">Be Better</span>
-        <span class="wordmark__line wordmark__line--em">at Math</span>
-      </p>
-      <p class="splash__hint">Toque para começar</p>
-    </section>
+  <div class="moldura">
 
-    <!-- ╌╌╌ MENU ╌╌╌ -->
-    <section id="menu" class="screen is-hidden" data-screen="menu" hidden>
-      <header class="bar">
-        <p class="bar__mark">Be Better at Math</p>
-        <button class="icon-btn" type="button" data-action="toggle-theme" aria-label="Alternar tema claro e escuro">
-          <span aria-hidden="true" data-theme-icon>◐</span>
-        </button>
-      </header>
-
-      <h1 class="title">O que vamos<br />treinar hoje?</h1>
-
-      <nav class="stack" aria-label="Modos de treino">
-        <button class="card-btn" type="button" data-action="goto" data-target="tabuadaConfig">
-          <span class="card-btn__name">Tabuada</span>
-          <span class="card-btn__desc">Multiplicação em sequência, por faixa de números</span>
-        </button>
-
-        <button class="card-btn" type="button" data-action="goto" data-target="randomConfig">
-          <span class="card-btn__name">Números aleatórios</span>
-          <span class="card-btn__desc">Soma, subtração, multiplicação e divisão</span>
-        </button>
-
-        <button class="card-btn card-btn--soon" type="button" disabled aria-disabled="true">
-          <span class="card-btn__name">Sudoku</span>
-          <span class="card-btn__desc">Em desenvolvimento</span>
-        </button>
-
-        <button class="card-btn card-btn--soon" type="button" disabled aria-disabled="true">
-          <span class="card-btn__name">Lógica</span>
-          <span class="card-btn__desc">Em desenvolvimento</span>
-        </button>
-      </nav>
-
-      <footer class="credits">
-        <p>Feito por <strong>Alexandre</strong> e <strong>Felipe</strong></p>
-        <button class="link-btn" type="button" data-action="goto" data-target="about">Sobre o projeto</button>
-      </footer>
-    </section>
-
-    <!-- ╌╌╌ TABUADA: FAIXA ╌╌╌ -->
-    <section id="tabuadaConfig" class="screen is-hidden" data-screen="tabuadaConfig" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
-      </header>
-
-      <h2 class="title">Tabuada</h2>
-      <p class="lede">Escolha a faixa de números. Cada rodada tem 10 contas.</p>
-
-      <div class="stack">
-        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="easy">
-          <span class="card-btn__name">Fácil</span>
-          <span class="card-btn__desc">Tabuadas de 1 a 10</span>
-        </button>
-        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="medium">
-          <span class="card-btn__name">Médio</span>
-          <span class="card-btn__desc">Tabuadas de 10 a 50</span>
-        </button>
-        <button class="card-btn" type="button" data-action="start" data-mode="tabuada" data-level="hard">
-          <span class="card-btn__name">Difícil</span>
-          <span class="card-btn__desc">Tabuadas de 50 a 100</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ╌╌╌ ALEATÓRIOS: OPERAÇÃO ╌╌╌ -->
-    <section id="randomConfig" class="screen is-hidden" data-screen="randomConfig" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
-      </header>
-
-      <h2 class="title">Números aleatórios</h2>
-      <p class="lede">Escolha a operação.</p>
-
-      <div class="stack stack--grid">
-        <button class="op-btn" type="button" data-action="pick-op" data-op="sum">
-          <span class="op-btn__sign" aria-hidden="true">+</span>
-          <span class="op-btn__name">Soma</span>
-        </button>
-        <button class="op-btn" type="button" data-action="pick-op" data-op="sub">
-          <span class="op-btn__sign" aria-hidden="true">−</span>
-          <span class="op-btn__name">Subtração</span>
-        </button>
-        <button class="op-btn" type="button" data-action="pick-op" data-op="mul">
-          <span class="op-btn__sign" aria-hidden="true">×</span>
-          <span class="op-btn__name">Multiplicação</span>
-        </button>
-        <button class="op-btn" type="button" data-action="pick-op" data-op="div">
-          <span class="op-btn__sign" aria-hidden="true">÷</span>
-          <span class="op-btn__name">Divisão</span>
-        </button>
-        <button class="op-btn op-btn--wide" type="button" data-action="pick-op" data-op="mix">
-          <span class="op-btn__sign" aria-hidden="true">±</span>
-          <span class="op-btn__name">Misto — as quatro juntas</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ╌╌╌ ALEATÓRIOS: NÍVEL ╌╌╌ -->
-    <section id="randomLevel" class="screen is-hidden" data-screen="randomLevel" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="goto" data-target="randomConfig">Voltar</button>
-      </header>
-
-      <h2 class="title" data-op-title>Soma</h2>
-      <p class="lede">Escolha o nível. Cada rodada tem 10 contas.</p>
-
-      <div class="stack">
-        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="easy">
-          <span class="card-btn__name">Fácil</span>
-          <span class="card-btn__desc">Números de 1 a 10</span>
-        </button>
-        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="medium">
-          <span class="card-btn__name">Médio</span>
-          <span class="card-btn__desc">Números de 10 a 50</span>
-        </button>
-        <button class="card-btn" type="button" data-action="start" data-mode="random" data-level="hard">
-          <span class="card-btn__name">Difícil</span>
-          <span class="card-btn__desc">Números de 50 a 100</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ╌╌╌ JOGO ╌╌╌ -->
-    <section id="game" class="screen is-hidden" data-screen="game" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="quit">Sair</button>
-        <p class="bar__meta">
-          <span data-progress>1 / 10</span>
-        </p>
-      </header>
-
-      <div class="scoreline">
-        <span class="scoreline__item">
-          <span class="scoreline__value" data-score>0</span>
-          <span class="scoreline__label">pontos</span>
-        </span>
-        <span class="scoreline__item">
-          <span class="scoreline__value" data-streak>0</span>
-          <span class="scoreline__label">seguidas</span>
-        </span>
+    <!-- ╌╌╌ BARRA DE ESTADO ╌╌╌ -->
+    <header class="estado" data-estado hidden>
+      <div class="estado__marca">
+        <span class="estado__nivel" data-nivel-selo>1</span>
+        <span class="estado__xp-barra"><i data-nivel-barra style="transform:scaleX(0)"></i></span>
       </div>
 
-      <div class="progress" role="presentation">
-        <span class="progress__fill" data-progress-bar style="transform:scaleX(0)"></span>
-      </div>
-
-      <form class="worksheet" data-answer-form novalidate>
-        <p class="operation" data-operation aria-live="polite">
-          <span class="operation__expr">2 × 3</span>
-        </p>
-
-        <div class="blank">
-          <label class="sr-only" for="answer">Resposta</label>
-          <input
-            class="blank__input"
-            id="answer"
-            data-answer
-            type="text"
-            inputmode="numeric"
-            autocomplete="off"
-            autocorrect="off"
-            spellcheck="false"
-            enterkeyhint="done"
-            aria-describedby="feedback"
-          />
-        </div>
-
-        <button class="primary-btn" type="submit" data-submit>Responder</button>
-      </form>
-
-      <p class="feedback" id="feedback" data-feedback role="status" aria-live="polite"></p>
-    </section>
-
-    <!-- ╌╌╌ RESULTADO ╌╌╌ -->
-    <section id="results" class="screen is-hidden" data-screen="results" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="goto" data-target="menu">Menu</button>
-      </header>
-
-      <p class="result-eyebrow" data-result-mode>Tabuada · Fácil</p>
-      <h2 class="result-score"><span data-result-score>0</span><span class="result-score__unit">pts</span></h2>
-      <p class="result-record is-hidden" data-result-record>Novo recorde</p>
-
-      <dl class="result-grid">
-        <div class="result-grid__cell">
-          <dt>Acertos</dt>
-          <dd data-result-hits>0 de 10</dd>
-        </div>
-        <div class="result-grid__cell">
-          <dt>Maior sequência</dt>
-          <dd data-result-streak>0</dd>
-        </div>
-        <div class="result-grid__cell">
-          <dt>Tempo</dt>
-          <dd data-result-time>0s</dd>
-        </div>
-        <div class="result-grid__cell">
-          <dt>Seu recorde</dt>
-          <dd data-result-best>—</dd>
-        </div>
-      </dl>
-
-      <section class="misses is-hidden" data-misses-wrap>
-        <h3 class="misses__title">Para revisar</h3>
-        <ul class="misses__list" data-misses></ul>
-      </section>
-
-      <!-- Só aparece quando a API do placar está no ar (Docker ligado). -->
-      <section class="board is-hidden" data-board>
-        <h3 class="board__title">Placar compartilhado</h3>
-
-        <form class="board__join is-hidden" data-join-form>
-          <label class="sr-only" for="apelido">Seu apelido no placar</label>
-          <input
-            class="board__input"
-            id="apelido"
-            data-nickname
-            type="text"
-            maxlength="24"
-            minlength="2"
-            placeholder="Escolha um apelido"
-            autocomplete="nickname"
-            required
-          />
-          <button class="primary-btn" type="submit">Entrar no placar</button>
-        </form>
-
-        <ol class="board__list" data-board-list></ol>
-        <p class="board__note" data-board-note></p>
-      </section>
-
-      <div class="stack">
-        <button class="primary-btn" type="button" data-action="again">Jogar de novo</button>
-        <button class="ghost-btn" type="button" data-action="goto" data-target="menu">Voltar ao menu</button>
-      </div>
-    </section>
-
-    <!-- ╌╌╌ SOBRE ╌╌╌ -->
-    <section id="about" class="screen is-hidden" data-screen="about" hidden>
-      <header class="bar">
-        <button class="back-btn" type="button" data-action="goto" data-target="menu">Voltar</button>
-      </header>
-
-      <h2 class="title">Sobre</h2>
-      <p class="prose">
-        Be Better at Math é um treino curto de cálculo mental. Cada rodada tem dez
-        contas: você ganha pontos por acerto e pontos extras por manter uma
-        sequência. Os recordes ficam salvos neste aparelho.
+      <p class="selo selo--ofensiva" data-ofensiva-selo title="Dias seguidos jogando">
+        <span class="selo__icone" aria-hidden="true">🔥</span>
+        <span class="selo__valor" data-ofensiva>0</span>
+        <span class="sr-only">dias seguidos</span>
       </p>
 
-      <h3 class="subtitle">Desenvolvedores</h3>
-      <ul class="people">
-        <li class="people__item"><span class="people__initial" aria-hidden="true">A</span>Alexandre</li>
-        <li class="people__item"><span class="people__initial" aria-hidden="true">F</span>Felipe</li>
-      </ul>
+      <p class="selo selo--xp" title="Experiência acumulada">
+        <span class="selo__icone" aria-hidden="true">⚡</span>
+        <span class="selo__valor" data-xp>0</span>
+        <span class="sr-only">de experiência</span>
+      </p>
+    </header>
 
-      <div class="stack">
-        <button class="ghost-btn" type="button" data-action="reset-records">Apagar meus recordes</button>
-      </div>
+    <main class="palco" id="conteudo">
 
-      <footer class="credits">
-        <p data-version>Versão 2.1.0</p>
-        <a class="link-btn" href="https://github.com/xandoqa/BeBetterAtMath">Código no GitHub</a>
-      </footer>
-    </section>
+      <!-- ╌╌╌ ABERTURA ╌╌╌ -->
+      <section class="tela tela--abertura" data-tela="splash">
+        <div class="abertura__capi">
+          <svg class="capi capi--grande" data-humor="idle" viewBox="0 0 120 120" aria-label="Capi, a capivara mascote do app">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+          </svg>
+        </div>
 
-  </main>
+        <h1 class="logo">
+          <span class="logo__linha">Be Better</span>
+          <span class="logo__linha logo__linha--destaque">at Math</span>
+        </h1>
+        <p class="abertura__texto">Treino de cálculo mental, dez contas por vez.</p>
+        <button class="botao botao--principal" type="button" data-acao="comecar">Começar</button>
+        <p class="abertura__credito">por Alexandre e Felipe</p>
+      </section>
+
+      <!-- ╌╌╌ TRILHA ╌╌╌ -->
+      <section class="tela" data-tela="trilha" hidden>
+        <div class="meta" data-meta-cartao>
+          <div class="meta__texto">
+            <p class="meta__titulo">Meta de hoje</p>
+            <p class="meta__numero"><span data-meta-feito>0</span> / <span data-meta-alvo>50</span> XP</p>
+          </div>
+          <div class="meta__anel" data-meta-anel style="--parte:0">
+            <span data-meta-pct>0%</span>
+          </div>
+        </div>
+
+        <div class="trilha" data-trilha></div>
+
+        <p class="trilha__fim" data-trilha-fim hidden>
+          Trilha concluída. O treino livre continua aí para manter a prática.
+        </p>
+      </section>
+
+      <!-- ╌╌╌ TREINO LIVRE ╌╌╌ -->
+      <section class="tela" data-tela="livre" hidden>
+        <h2 class="titulo">Treino livre</h2>
+        <p class="apoio">Escolha o que treinar. Dez contas, cinco vidas.</p>
+
+        <fieldset class="grupo">
+          <legend class="grupo__rotulo">Operação</legend>
+          <div class="opcoes opcoes--operacoes" data-livre-operacoes role="radiogroup" aria-label="Operação"></div>
+        </fieldset>
+
+        <fieldset class="grupo">
+          <legend class="grupo__rotulo">Nível</legend>
+          <div class="opcoes opcoes--niveis" data-livre-niveis role="radiogroup" aria-label="Nível"></div>
+        </fieldset>
+
+        <div class="livre__recorde">
+          <span>Seu recorde aqui</span>
+          <strong data-livre-recorde>—</strong>
+        </div>
+
+        <button class="botao botao--principal" type="button" data-acao="comecar-livre">Treinar</button>
+      </section>
+
+      <!-- ╌╌╌ JOGO ╌╌╌ -->
+      <section class="tela tela--jogo" data-tela="jogo" hidden>
+        <header class="jogo__topo">
+          <button class="icone-botao" type="button" data-acao="sair-jogo" aria-label="Sair da rodada">
+            <span aria-hidden="true">✕</span>
+          </button>
+
+          <div class="progresso" role="progressbar" aria-label="Progresso da rodada" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" data-progresso-aria>
+            <i data-progresso style="transform:scaleX(0)"></i>
+          </div>
+
+          <p class="vidas" data-vidas aria-label="Vidas restantes"></p>
+        </header>
+
+        <div class="jogo__cena">
+          <svg class="capi" data-capi data-humor="idle" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <g class="capi-olhos-felizes">
+              <path d="M38 50 q6 -7 12 0" />
+              <path d="M70 50 q6 -7 12 0" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+          </svg>
+
+          <p class="conta" data-conta aria-live="polite">
+            <span class="conta__expr">—</span>
+          </p>
+
+          <form class="lacuna" data-forma novalidate>
+            <label class="sr-only" for="resposta">Resposta</label>
+            <input
+              class="lacuna__campo"
+              id="resposta"
+              data-resposta
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              aria-describedby="aviso"
+            />
+            <p class="aviso" id="aviso" data-aviso role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="teclado" data-teclado>
+          <button class="tecla" type="button" data-digito="1">1</button>
+          <button class="tecla" type="button" data-digito="2">2</button>
+          <button class="tecla" type="button" data-digito="3">3</button>
+          <button class="tecla" type="button" data-digito="4">4</button>
+          <button class="tecla" type="button" data-digito="5">5</button>
+          <button class="tecla" type="button" data-digito="6">6</button>
+          <button class="tecla" type="button" data-digito="7">7</button>
+          <button class="tecla" type="button" data-digito="8">8</button>
+          <button class="tecla" type="button" data-digito="9">9</button>
+          <button class="tecla tecla--secundaria" type="button" data-digito="-" aria-label="Sinal de menos">−</button>
+          <button class="tecla" type="button" data-digito="0">0</button>
+          <button class="tecla tecla--secundaria" type="button" data-acao="apagar" aria-label="Apagar">⌫</button>
+        </div>
+
+        <button class="botao botao--principal jogo__enviar" type="button" data-acao="responder">Verificar</button>
+
+        <!-- Painel de retorno: sobe de baixo, como no fim de uma questão -->
+        <div class="retorno" data-retorno hidden>
+          <p class="retorno__titulo" data-retorno-titulo></p>
+          <p class="retorno__detalhe" data-retorno-detalhe></p>
+          <button class="botao" type="button" data-acao="continuar">Continuar</button>
+        </div>
+      </section>
+
+      <!-- ╌╌╌ RESULTADO ╌╌╌ -->
+      <section class="tela tela--fim" data-tela="fim" hidden>
+        <div class="fim__cabeca" data-fim-cabeca>
+          <svg class="capi capi--grande" data-fim-capi data-humor="festa" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-felizes">
+              <path d="M38 50 q6 -7 12 0" />
+              <path d="M70 50 q6 -7 12 0" />
+            </g>
+            <path class="capi-boca" d="M50 84 q10 9 20 0" />
+          </svg>
+
+          <p class="fim__estrelas" data-fim-estrelas hidden></p>
+          <h2 class="fim__titulo" data-fim-titulo>Rodada concluída</h2>
+          <p class="fim__sub" data-fim-sub></p>
+        </div>
+
+        <p class="fim__xp"><span data-fim-xp>0</span><span class="fim__xp-unidade">XP</span></p>
+
+        <dl class="placar-grade">
+          <div class="placar-grade__item">
+            <dt>Acertos</dt>
+            <dd data-fim-acertos>0 de 10</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Pontos</dt>
+            <dd data-fim-pontos>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Maior sequência</dt>
+            <dd data-fim-sequencia>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Tempo</dt>
+            <dd data-fim-tempo>0s</dd>
+          </div>
+        </dl>
+
+        <p class="faixa faixa--recorde" data-fim-recorde hidden>Novo recorde nesta categoria</p>
+        <p class="faixa faixa--nivel" data-fim-nivel hidden></p>
+
+        <section class="fim__conquistas" data-fim-conquistas hidden>
+          <h3 class="subtitulo">Conquistas desbloqueadas</h3>
+          <ul class="medalhas medalhas--compacta" data-fim-conquistas-lista></ul>
+        </section>
+
+        <section class="revisar" data-revisar hidden>
+          <h3 class="subtitulo">Para revisar</h3>
+          <ul class="revisar__lista" data-revisar-lista></ul>
+        </section>
+
+        <!-- Placar compartilhado: só aparece com a API no ar -->
+        <section class="ranking" data-ranking hidden>
+          <h3 class="subtitulo">Placar compartilhado</h3>
+
+          <form class="ranking__entrar" data-apelido-forma hidden>
+            <label class="sr-only" for="apelido">Seu apelido no placar</label>
+            <input class="campo" id="apelido" data-apelido type="text" maxlength="24" minlength="2"
+                   placeholder="Escolha um apelido" autocomplete="nickname" required />
+            <button class="botao botao--compacto" type="submit">Entrar no placar</button>
+          </form>
+
+          <ol class="ranking__lista" data-ranking-lista></ol>
+          <p class="apoio apoio--miudo" data-ranking-nota></p>
+        </section>
+
+        <div class="fim__acoes">
+          <button class="botao botao--principal" type="button" data-acao="seguir">Continuar</button>
+          <button class="botao botao--vazado" type="button" data-acao="repetir">Jogar de novo</button>
+        </div>
+      </section>
+
+      <!-- ╌╌╌ MEDALHAS ╌╌╌ -->
+      <section class="tela" data-tela="medalhas" hidden>
+        <h2 class="titulo">Medalhas</h2>
+        <p class="apoio"><span data-medalhas-contagem>0 de 0</span> conquistadas</p>
+        <ul class="medalhas" data-medalhas-lista></ul>
+      </section>
+
+      <!-- ╌╌╌ PERFIL ╌╌╌ -->
+      <section class="tela" data-tela="eu" hidden>
+        <div class="perfil">
+          <svg class="capi" data-humor="idle" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#capi-corpo" />
+            <g class="capi-olhos-abertos">
+              <circle cx="44" cy="50" r="5" class="capi-olho" />
+              <circle cx="76" cy="50" r="5" class="capi-olho" />
+              <circle cx="45.6" cy="48.4" r="1.7" class="capi-brilho" />
+              <circle cx="77.6" cy="48.4" r="1.7" class="capi-brilho" />
+            </g>
+            <path class="capi-boca" d="M52 86 q8 6 16 0" />
+          </svg>
+          <div>
+            <h2 class="titulo titulo--compacto" data-perfil-nome>Jogador</h2>
+            <p class="apoio" data-perfil-nivel>Nível 1</p>
+          </div>
+        </div>
+
+        <dl class="placar-grade">
+          <div class="placar-grade__item">
+            <dt>Rodadas</dt>
+            <dd data-perfil-rodadas>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Contas respondidas</dt>
+            <dd data-perfil-contas>0</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Precisão</dt>
+            <dd data-perfil-precisao>0%</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Maior ofensiva</dt>
+            <dd data-perfil-ofensiva>0 dias</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Lições</dt>
+            <dd data-perfil-licoes>0 de 24</dd>
+          </div>
+          <div class="placar-grade__item">
+            <dt>Rodadas perfeitas</dt>
+            <dd data-perfil-perfeitas>0</dd>
+          </div>
+        </dl>
+
+        <h3 class="subtitulo">Meta diária</h3>
+        <div class="opcoes opcoes--metas" data-metas role="radiogroup" aria-label="Meta diária de XP"></div>
+
+        <h3 class="subtitulo">Ajustes</h3>
+        <ul class="ajustes">
+          <li class="ajuste">
+            <span class="ajuste__nome">Tema</span>
+            <button class="chip" type="button" data-acao="tema" data-tema-rotulo>Automático</button>
+          </li>
+          <li class="ajuste">
+            <span class="ajuste__nome">Som e vibração</span>
+            <button class="chip" type="button" data-acao="som" role="switch" data-som-rotulo>Ligado</button>
+          </li>
+          <li class="ajuste">
+            <span class="ajuste__nome">Teclado na tela</span>
+            <button class="chip" type="button" data-acao="teclado" role="switch" data-teclado-rotulo>Ligado</button>
+          </li>
+        </ul>
+
+        <p class="aviso aviso--atencao" data-sem-armazenamento hidden>
+          Este navegador não está deixando guardar dados, então o progresso vale só
+          para esta sessão. Em janela anônima isso é esperado.
+        </p>
+
+        <h3 class="subtitulo">Sobre</h3>
+        <p class="apoio">
+          Be Better at Math é um treino curto de cálculo mental. Cada rodada tem dez
+          contas e cinco vidas: você ganha XP por acerto, mantém a ofensiva jogando
+          todo dia e destrava a trilha concluindo lição por lição. O progresso fica
+          salvo neste aparelho.
+        </p>
+
+        <ul class="pessoas">
+          <li class="pessoa"><span class="pessoa__inicial" aria-hidden="true">A</span>Alexandre</li>
+          <li class="pessoa"><span class="pessoa__inicial" aria-hidden="true">F</span>Felipe</li>
+        </ul>
+
+        <div class="perfil__rodape">
+          <button class="botao botao--vazado botao--perigo" type="button" data-acao="zerar">
+            Começar do zero
+          </button>
+          <p class="apoio apoio--miudo">
+            <span data-versao>Versão 3.0.0</span> ·
+            <a href="https://github.com/xandoqa/BeBetterAtMath">Código no GitHub</a>
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ╌╌╌ NAVEGAÇÃO INFERIOR ╌╌╌ -->
+    <nav class="navegacao" data-navegacao aria-label="Seções" hidden>
+      <button class="navegacao__item" type="button" data-ir="trilha">
+        <span class="navegacao__icone" aria-hidden="true">🗺️</span>
+        <span class="navegacao__nome">Trilha</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="livre">
+        <span class="navegacao__icone" aria-hidden="true">🎲</span>
+        <span class="navegacao__nome">Livre</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="medalhas">
+        <span class="navegacao__icone" aria-hidden="true">🏅</span>
+        <span class="navegacao__nome">Medalhas</span>
+      </button>
+      <button class="navegacao__item" type="button" data-ir="eu">
+        <span class="navegacao__icone" aria-hidden="true">🙂</span>
+        <span class="navegacao__nome">Eu</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Avisos passageiros (nível novo, conquista, ofensiva) -->
+  <div class="torradas" data-torradas aria-live="polite" aria-atomic="false"></div>
 
   <!-- Compilado de src/*.ts — rode `npm run build` após editar a fonte. -->
   <script type="module" src="assets/js/app.js"></script>
