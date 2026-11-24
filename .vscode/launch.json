@@ -35,7 +35,12 @@
       "type": "debugpy",
       "request": "launch",
       "module": "unittest",
-      "args": ["discover", "-s", "tools", "-v"],
+      "args": [
+        "discover",
+        "-s",
+        "tools",
+        "-v"
+      ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
     },
@@ -44,11 +49,17 @@
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["app:app", "--reload", "--port", "8000"],
+      "args": [
+        "app:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
       "cwd": "${workspaceFolder}/server",
       "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
       "env": {
-        "DATABASE_URL": "postgresql://bbam:bbam@localhost:5432/bbam"
+        "POSTGRES_HOST": "localhost"
       }
     }
   ]

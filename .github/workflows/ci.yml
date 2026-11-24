@@ -38,6 +38,31 @@ jobs:
             exit 1
           fi
 
+  segredos:
+    name: Segredos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # O histórico inteiro: um segredo apagado no último commit
+          # continua recuperável nos anteriores.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Procurar segredo no que está versionado
+        run: python tools/checar_segredos.py
+
+      - name: Conferir que nenhum .env está versionado
+        run: |
+          if git ls-files --error-unmatch .env >/dev/null 2>&1; then
+            echo "::error::O arquivo .env está versionado. Remova-o e troque a senha."
+            exit 1
+          fi
+          echo "Nenhum .env versionado."
+
   python:
     name: Python
     runs-on: ubuntu-latest

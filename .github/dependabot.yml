@@ -1,0 +1,37 @@
+# Avisa quando uma dependência ganha correção de segurança.
+#
+# O projeto tem poucas dependências de propósito, mas "poucas" não é
+# "nenhuma": o FastAPI, o psycopg e as imagens do Docker recebem
+# correções, e sem isto ninguém fica sabendo.
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "docker"
+    directory: "/server"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "deps"
