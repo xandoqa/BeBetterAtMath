@@ -14,18 +14,20 @@ ou, pelo Docker, com o ./iniciar.sh na raiz do projeto.
 from __future__ import annotations
 
 import os
+import time
+from collections import defaultdict
 from contextlib import asynccontextmanager
 from typing import Annotated, AsyncIterator, Literal
 
 import psycopg
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
 
-VERSION = "3.0.0"
+VERSION = "3.1.0"
 
 def points_for(streak: int) -> int:
     """Espelha pointsFor() de src/engine.ts: 10 de base, +2 por acerto
@@ -89,13 +91,67 @@ app = FastAPI(
 )
 
 # O site pode ser servido de outra origem (nginx local, GitHub Pages).
-# Só os métodos que a API de fato usa ficam liberados.
+#
+# O padrão é só o localhost do docker-compose: liberar "*" por omissão
+# deixaria qualquer página da web chamar esta API, e quem publicasse sem
+# configurar nada nem perceberia. Para liberar outra origem, use a
+# variável CORS_ORIGINS; "*" continua possível, mas tem que ser pedido.
+PADRAO_CORS = "http://localhost:8080,http://localhost:8000,http://127.0.0.1:8080"
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
+    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", PADRAO_CORS).split(",") if o.strip()],
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
+    max_age=600,
 )
+
+
+# --- Limite de requisições ------------------------------------------
+#
+# `POST /api/rodadas` é escrita pública: sem limite, um laço de curl
+# enche a tabela em minutos. Implementado aqui mesmo, em memória, em vez
+# de trazer uma dependência: são 20 linhas e o app roda num processo só.
+#
+# Limitação honesta: a contagem é por processo. Com vários workers o teto
+# efetivo é `limite × workers`. Para valer como defesa séria num deploy
+# com réplicas, o contador precisa sair daqui para o Redis.
+
+JANELA_SEGUNDOS = 60
+LIMITE_POR_JANELA = int(os.getenv("RATE_LIMIT", "30"))
+
+_batidas: dict[str, list[float]] = defaultdict(list)
+
+
+def _quem(request: Request) -> str:
+    """Identifica o chamador. Atrás do nginx, o IP real vem no cabeçalho."""
+    encaminhado = request.headers.get("x-forwarded-for", "")
+    if encaminhado:
+        return encaminhado.split(",")[0].strip()
+    return request.client.host if request.client else "desconhecido"
+
+
+def limitar(request: Request) -> None:
+    """Recusa com 429 quem passar do teto na janela."""
+    agora = time.monotonic()
+    chave = _quem(request)
+    recentes = [t for t in _batidas[chave] if agora - t < JANELA_SEGUNDOS]
+
+    if len(recentes) >= LIMITE_POR_JANELA:
+        _batidas[chave] = recentes
+        raise HTTPException(
+            status_code=429,
+            detail="Muitas requisições. Espere um minuto.",
+            headers={"Retry-After": str(JANELA_SEGUNDOS)},
+        )
+
+    recentes.append(agora)
+    _batidas[chave] = recentes
+
+    # Faxina: sem isto o dicionário cresce para sempre, um IP por chave.
+    if len(_batidas) > 10_000:
+        for ip in [k for k, v in _batidas.items() if not v or agora - v[-1] > JANELA_SEGUNDOS]:
+            del _batidas[ip]
 
 
 async def connection() -> AsyncIterator[psycopg.AsyncConnection]:
@@ -195,7 +251,13 @@ async def saude(conn: Conn) -> Saude:
         return Saude(status="degradado", versao=VERSION, banco=False)
 
 
-@app.post("/api/rodadas", response_model=RodadaSalva, status_code=201, tags=["placar"])
+@app.post(
+    "/api/rodadas",
+    response_model=RodadaSalva,
+    status_code=201,
+    tags=["placar"],
+    dependencies=[Depends(limitar)],
+)
 async def registrar_rodada(rodada: RodadaEntrada, conn: Conn) -> RodadaSalva:
     """Guarda uma rodada terminada e devolve a posição alcançada."""
     async with conn.cursor() as cur:
