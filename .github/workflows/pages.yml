@@ -28,7 +28,7 @@ jobs:
       - uses: actions/configure-pages@v5
 
       # O build fica versionado, então basta enviar a raiz do projeto
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: "."
 
