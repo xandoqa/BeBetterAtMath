@@ -1,9 +1,16 @@
 /**
- * Regras do jogo — sem nenhuma dependência do DOM.
+ * Regras de uma rodada — sem nenhuma dependência do DOM.
  *
- * Isolar a lógica aqui permite testá-la fora do navegador e manter
- * a versão de terminal (tools/bbam.py) com o mesmo comportamento.
+ * Isolar as regras aqui permite testá-las fora do navegador e manter a
+ * versão de terminal (tools/bbam.py) com o mesmo comportamento.
+ *
+ * Progressão (XP, níveis, ofensiva, conquistas) NÃO mora aqui: é outro
+ * assunto, e fica em progress.ts.
  */
+
+/** Versão do projeto. Ao publicar, atualize os cinco lugares listados
+ *  em docs/desenvolvimento.md. */
+export const VERSION = "3.0.0";
 
 export type Mode = "tabuada" | "random";
 export type Level = "easy" | "medium" | "hard";
@@ -36,16 +43,25 @@ export interface RoundResult {
   readonly bestStreak: number;
   readonly elapsedMs: number;
   readonly misses: readonly Question[];
+  /** Vidas restantes ao terminar. */
+  readonly heartsLeft: number;
+  /** false quando as vidas acabaram antes da última conta. */
+  readonly completed: boolean;
+  /** Acertos por operação, contados conta a conta — o modo misto sorteia
+   *  as quatro, então contar pela operação da rodada seria impreciso. */
+  readonly correctByOperation: Readonly<Partial<Record<ConcreteOperation, number>>>;
+  /** Lição da trilha, quando a rodada veio de lá. */
+  readonly lessonId?: string;
 }
 
 /** Gerador de números: injetável para que os testes sejam determinísticos. */
 export type Rng = () => number;
 
-/** Versão do projeto. Mantenha em sincronia com package.json,
- *  tools/bbam.py e CHANGELOG.md ao publicar. */
-export const VERSION = "2.1.0";
-
+/** Contas por rodada. */
 export const ROUND_LENGTH = 10;
+
+/** Vidas por rodada. Erra, perde uma; sem vidas, a rodada termina. */
+export const MAX_HEARTS = 5;
 
 export const LEVELS: Readonly<Record<Level, LevelSpec>> = {
   easy: { label: "Fácil", min: 1, max: 10 },
@@ -61,7 +77,7 @@ export const OPERATION_LABELS: Readonly<Record<Operation, string>> = {
   mix: "Misto",
 };
 
-const SYMBOLS: Readonly<Record<ConcreteOperation, string>> = {
+export const OPERATION_SYMBOLS: Readonly<Record<ConcreteOperation, string>> = {
   sum: "+",
   sub: "−",
   mul: "×",
@@ -69,6 +85,19 @@ const SYMBOLS: Readonly<Record<ConcreteOperation, string>> = {
 };
 
 const MIX_POOL: readonly ConcreteOperation[] = ["sum", "sub", "mul", "div"];
+
+const BY_SYMBOL = new Map<string, ConcreteOperation>(
+  (Object.entries(OPERATION_SYMBOLS) as [ConcreteOperation, string][]).map(([op, symbol]) => [
+    symbol,
+    op,
+  ]),
+);
+
+/** Qual operação um símbolo representa. Usado para contar acertos por
+ *  operação quando a rodada é mista. */
+export function operationOf(symbol: string): ConcreteOperation | undefined {
+  return BY_SYMBOL.get(symbol);
+}
 
 /** Inteiro entre min e max, ambos inclusive. */
 export function randInt(min: number, max: number, rng: Rng = Math.random): number {
@@ -78,7 +107,8 @@ export function randInt(min: number, max: number, rng: Rng = Math.random): numbe
 }
 
 function build(a: number, b: number, op: ConcreteOperation, answer: number): Question {
-  return { a, b, symbol: SYMBOLS[op], answer, text: `${a} ${SYMBOLS[op]} ${b}` };
+  const symbol = OPERATION_SYMBOLS[op];
+  return { a, b, symbol, answer, text: `${a} ${symbol} ${b}` };
 }
 
 /**
@@ -131,11 +161,22 @@ export function makeQuestion(
 
 /**
  * Pontos de um acerto. `streak` é a sequência já contando este acerto.
- * Base de 10, mais 2 por acerto seguido, com teto de 20 para que a
- * pontuação não dispare.
+ * Base de 10, mais 2 por acerto seguido, com teto de 20 para que uma
+ * sequência longa de sorte não torne o recorde inalcançável depois.
  */
 export function pointsFor(streak: number): number {
   return 10 + Math.min(Math.max(streak - 1, 0), 5) * 2;
+}
+
+/**
+ * Pontuação máxima possível numa rodada de `total` contas — todas certas,
+ * em sequência. Serve para a API recusar pontuação impossível: sem isso,
+ * qualquer um pode enviar um número inventado e dominar o placar.
+ */
+export function maxScoreFor(total: number = ROUND_LENGTH): number {
+  let sum = 0;
+  for (let streak = 1; streak <= total; streak += 1) sum += pointsFor(streak);
+  return sum;
 }
 
 /** Percentual de acertos, arredondado. */
@@ -155,4 +196,10 @@ export function describeRound(mode: Mode, level: Level, operation: Operation): s
   const parts =
     mode === "tabuada" ? ["Tabuada"] : ["Números aleatórios", OPERATION_LABELS[operation]];
   return [...parts, LEVELS[level].label].join(" · ");
+}
+
+/** Rótulo curto, para espaços apertados: "Tabuada · Fácil". */
+export function describeShort(mode: Mode, level: Level, operation: Operation): string {
+  const head = mode === "tabuada" ? "Tabuada" : OPERATION_LABELS[operation];
+  return `${head} · ${LEVELS[level].label}`;
 }
