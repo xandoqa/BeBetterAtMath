@@ -1,5 +1,5 @@
 -- Be Better at Math — esquema do placar compartilhado
--- Versão 2.1.0
+-- Versão 3.0.0
 --
 -- Este arquivo roda automaticamente na PRIMEIRA vez que o contêiner do
 -- Postgres sobe com o volume vazio. Se você alterar o esquema depois,
@@ -58,7 +58,10 @@ CREATE TABLE rodadas (
 
     -- O banco é a última linha de defesa: mesmo que a API tenha um erro,
     -- uma rodada impossível não entra.
-    CONSTRAINT pontos_validos   CHECK (pontos BETWEEN 0 AND 10000),
+    -- Cada conta vale no máximo 20 pontos (ver pointsFor em engine.ts),
+    -- então uma rodada honesta nunca passa de total × 20. É o limite que
+    -- dá para expressar em SQL; a API confere o valor exato.
+    CONSTRAINT pontos_validos   CHECK (pontos >= 0 AND pontos <= total * 20),
     CONSTRAINT total_valido     CHECK (total BETWEEN 1 AND 100),
     CONSTRAINT acertos_validos  CHECK (acertos BETWEEN 0 AND total),
     CONSTRAINT sequencia_valida CHECK (maior_seq BETWEEN 0 AND total),

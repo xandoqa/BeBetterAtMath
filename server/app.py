@@ -23,8 +23,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, Field, field_validator
+from pydantic_core.core_schema import ValidationInfo
 
-VERSION = "2.1.0"
+VERSION = "3.0.0"
+
+def points_for(streak: int) -> int:
+    """Espelha pointsFor() de src/engine.ts: 10 de base, +2 por acerto
+    seguido, com teto de 20."""
+    return 10 + min(max(streak - 1, 0), 5) * 2
+
+
+def max_score_for(total: int) -> int:
+    """Pontuação máxima possível numa rodada de `total` contas.
+
+    A API precisa disto porque o cliente é o navegador de quem joga: nada
+    impede alguém de enviar `pontos: 9999` com um curl. Sem este teto,
+    dominar o placar é uma linha de comando.
+    """
+    return sum(points_for(streak) for streak in range(1, total + 1))
+
 
 Modo = Literal["tabuada", "random"]
 Nivel = Literal["easy", "medium", "hard"]
@@ -117,10 +134,29 @@ class RodadaEntrada(BaseModel):
 
     @field_validator("acertos")
     @classmethod
-    def acertos_cabem_no_total(cls, value: int, info) -> int:
+    def acertos_cabem_no_total(cls, value: int, info: ValidationInfo) -> int:
         total = info.data.get("total")
         if total is not None and value > total:
             raise ValueError("Não dá para acertar mais contas do que a rodada tem.")
+        return value
+
+    @field_validator("maior_seq")
+    @classmethod
+    def sequencia_cabe_no_total(cls, value: int, info: ValidationInfo) -> int:
+        total = info.data.get("total")
+        if total is not None and value > total:
+            raise ValueError("A sequência não pode passar do número de contas.")
+        return value
+
+    @field_validator("pontos")
+    @classmethod
+    def pontos_sao_possiveis(cls, value: int, info: ValidationInfo) -> int:
+        total = info.data.get("total")
+        if total is not None and value > max_score_for(int(total)):
+            raise ValueError(
+                f"Pontuação impossível: {total} contas valem no máximo "
+                f"{max_score_for(int(total))} pontos.",
+            )
         return value
 
 
@@ -162,9 +198,6 @@ async def saude(conn: Conn) -> Saude:
 @app.post("/api/rodadas", response_model=RodadaSalva, status_code=201, tags=["placar"])
 async def registrar_rodada(rodada: RodadaEntrada, conn: Conn) -> RodadaSalva:
     """Guarda uma rodada terminada e devolve a posição alcançada."""
-    if rodada.acertos > rodada.total or rodada.maior_seq > rodada.total:
-        raise HTTPException(status_code=422, detail="Rodada inconsistente.")
-
     async with conn.cursor() as cur:
         # Cria o jogador na primeira vez; nas seguintes só recupera o id.
         await cur.execute(
@@ -176,7 +209,8 @@ async def registrar_rodada(rodada: RodadaEntrada, conn: Conn) -> RodadaSalva:
             (rodada.apelido,),
         )
         row = await cur.fetchone()
-        assert row is not None
+        if row is None:  # pragma: no cover — o RETURNING sempre devolve
+            raise HTTPException(status_code=500, detail="Falha ao registrar o jogador.")
         jogador_id = row["id"]
 
         await cur.execute(
@@ -200,7 +234,8 @@ async def registrar_rodada(rodada: RodadaEntrada, conn: Conn) -> RodadaSalva:
             ),
         )
         inserida = await cur.fetchone()
-        assert inserida is not None
+        if inserida is None:  # pragma: no cover
+            raise HTTPException(status_code=500, detail="Falha ao registrar a rodada.")
 
         await cur.execute(
             """

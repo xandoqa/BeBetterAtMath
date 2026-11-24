@@ -1,15 +1,22 @@
 # Regras do jogo
 
-Versão 2.1.0
+Versão 3.0.0
 
 As regras vivem em dois lugares que precisam concordar entre si:
 `src/engine.ts` (web) e `tools/bbam.py` (terminal). Ao mudar uma regra, mude
 nos dois e atualize este documento.
 
+Isto cobre **uma rodada**. XP, níveis, ofensiva e conquistas são outro
+assunto, em [progressao.md](progressao.md).
+
 ## A rodada
 
-Toda rodada tem **dez contas**, definidas pela constante `ROUND_LENGTH`. Não há
-limite de tempo: o cronômetro só mede quanto durou, para aparecer no resultado.
+Toda rodada tem **dez contas**, definidas pela constante `ROUND_LENGTH`, e
+**cinco vidas** (`MAX_HEARTS`). Cada erro tira uma vida; sem vidas, a rodada
+termina antes das dez contas.
+
+Não há limite de tempo: o cronômetro só mede quanto durou, para aparecer no
+resultado.
 
 A rodada termina quando a décima conta é respondida. Não existe mais o avanço
 infinito da versão 1.0.0.
@@ -78,8 +85,15 @@ inalcançável depois.
 Um erro **zera a sequência**, mas não tira pontos. A maior sequência da rodada
 é guardada à parte e aparece no resultado.
 
-A pontuação máxima de uma rodada perfeita é **176 pontos**
-(10 + 12 + 14 + 16 + 18 + 20 × 5).
+A pontuação máxima de uma rodada perfeita é **170 pontos**:
+
+```
+10 + 12 + 14 + 16 + 18 + 20 + 20 + 20 + 20 + 20 = 170
+```
+
+A v2.1.0 documentava 176 aqui, por engano — a conta estava errada. A API usa
+esse teto para recusar pontuação impossível, então o número precisa estar
+certo: `maxScoreFor()` em `src/engine.ts` o calcula em vez de deixá-lo fixo.
 
 ## O que acontece a cada resposta
 
