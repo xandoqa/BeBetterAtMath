@@ -390,15 +390,21 @@ a {
 .capi-brilho { fill: #ffffff; }
 
 .capi-olhos-felizes path,
-.capi-boca {
+.capi-boca,
+.capi-boca-triste {
   fill: none;
   stroke: #2a1c0c;
   stroke-width: 3.4;
   stroke-linecap: round;
 }
 
-/* Expressões: um humor por vez. */
+/* Expressões: um humor por vez. O mascote carrega a emoção que a
+   interface deliberadamente não carrega. */
 .capi-olhos-felizes { display: none; }
+.capi-boca-triste { display: none; }
+
+.capi[data-humor="errado"] .capi-boca { display: none; }
+.capi[data-humor="errado"] .capi-boca-triste { display: block; }
 .capi[data-humor="certo"] .capi-olhos-abertos,
 .capi[data-humor="festa"] .capi-olhos-abertos { display: none; }
 .capi[data-humor="certo"] .capi-olhos-felizes,
@@ -737,12 +743,16 @@ a {
   transform: translateX(-50%);
   display: flex;
   gap: 1px;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: var(--raio-chip);
   background: var(--carta);
+  /* Âmbar explícito: herdar a cor do botão deixaria as estrelas quase
+     invisíveis sobre a pílula escura no tema escuro. */
+  color: var(--ambar);
   box-shadow: 0 0 0 2px var(--linha);
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   line-height: 1;
+  letter-spacing: 1px;
 }
 
 .licao__nome {
@@ -917,13 +927,23 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--e3);
+  /* A conta e a lacuna formam UM bloco: o espaço entre elas é menor que
+     o espaço em volta, senão a resposta parece solta na tela. */
+  gap: var(--e2);
   min-height: 0;
+}
+
+/* O mascote ganha presença: na v3 ele carrega a emoção que a interface
+   deliberadamente não carrega. */
+.tela--jogo .capi {
+  width: 112px;
+  height: 112px;
+  margin-bottom: var(--e2);
 }
 
 /* o herói da tela */
 .conta {
-  margin: 0;
+  margin: 0 0 var(--e1);
   text-align: center;
   font-family: var(--fonte-num);
   font-weight: 700;
@@ -934,7 +954,7 @@ a {
 
 .lacuna {
   width: 100%;
-  max-width: 300px;
+  max-width: 240px;
 }
 
 /* o campo não é uma caixa: é a lacuna de uma folha de exercício */
@@ -954,9 +974,20 @@ a {
   transition: border-color var(--tempo) var(--curva), color var(--tempo) var(--curva);
 }
 
+/* O "?" marca onde a resposta vai: sem ele, a lacuna vazia lê como um
+   espaço morto em vez de um campo esperando dígitos. */
+.lacuna__campo::placeholder {
+  color: var(--linha);
+  opacity: 1;
+}
+
 .lacuna__campo:focus {
   outline: none;
   border-bottom-color: var(--violeta);
+}
+
+.lacuna__campo:focus::placeholder {
+  color: transparent;
 }
 
 .lacuna__campo::-webkit-outer-spin-button,
