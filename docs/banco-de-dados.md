@@ -1,6 +1,6 @@
 # Banco de dados
 
-Versão 2.1.0 · PostgreSQL 16
+Versão 3.0.0 · PostgreSQL 16
 
 ## Por que existe
 

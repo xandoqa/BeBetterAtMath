@@ -1,6 +1,6 @@
 # Versão de terminal
 
-Versão 2.1.0 · Python 3.10 ou mais novo
+Versão 3.0.0 · Python 3.10 ou mais novo
 
 O mesmo treino, sem navegador. Nenhuma dependência além do Python: só
 biblioteca padrão.
@@ -64,7 +64,7 @@ Ficam em `~/.bebetteratmath.json`, em JSON simples:
 
 ```json
 {
-  "tabuada:mul:facil": 176,
+  "tabuada:mul:facil": 170,
   "aleatorio:div:medio": 142
 }
 ```

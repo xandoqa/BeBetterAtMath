@@ -1,8 +1,8 @@
 {
   "name": "be-better-at-math",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Treino de cálculo mental: tabuada e operações aleatórias, com pontuação e recordes locais.",
+  "description": "Treino diário de cálculo mental: trilha de lições, XP, ofensiva e conquistas.",
   "type": "module",
   "contributors": [
     "Alexandre",
@@ -13,7 +13,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "check": "tsc --noEmit",
-    "serve": "python3 tools/serve.py"
+    "serve": "python3 tools/serve.py",
+    "test": "python3 -m unittest discover -s tools -v"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

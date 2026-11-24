@@ -1,6 +1,6 @@
 # Arquitetura
 
-Versão 2.1.0
+Versão 3.0.0
 
 ## Visão geral
 

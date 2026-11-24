@@ -1,6 +1,6 @@
 # Desenvolvimento
 
-Versão 2.1.0
+Versão 3.0.0
 
 ## Rodar o site sozinho
 
